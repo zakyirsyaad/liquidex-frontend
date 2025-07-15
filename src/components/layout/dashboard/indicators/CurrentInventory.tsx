@@ -10,8 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Box, Warehouse } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useExchangeStore } from "@/store/exchangeStore";
 
 export default function CurrentInventory() {
+  const data = useExchangeStore((s) => s.data);
+  const selected = useExchangeStore((s) => s.selectedExchange);
+  const selectedData = data.find((d) => d.exchange === selected);
+
   return (
     <Card className="col-span-2">
       <CardHeader>
@@ -28,14 +33,14 @@ export default function CurrentInventory() {
           className="bg-[#F3EE8D]/20 border-2 border-[#F3EE8D]/30 hover:bg-[#F3EE8D]/20 font-medium text-primary"
           size={"lg"}
         >
-          $3000 USDT
+          ${selectedData?.balance_usdt.toLocaleString()} USDT
         </Button>
 
         <Button
           size={"lg"}
           className="bg-[#F3EE8D]/20 border-2 border-[#F3EE8D]/30 hover:bg-[#F3EE8D]/20 font-medium text-primary"
         >
-          3000 TOKEN
+          {selectedData?.balance_token.toLocaleString()} TOKEN
         </Button>
       </CardContent>
     </Card>

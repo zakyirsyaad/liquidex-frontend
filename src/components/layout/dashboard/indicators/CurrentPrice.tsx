@@ -1,22 +1,16 @@
 import React from "react";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { DollarSign, TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { DollarSign } from "lucide-react";
+import { Area, AreaChart, CartesianGrid } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useExchangeStore } from "@/store/exchangeStore";
+
 export const description = "An area chart with gradient fill";
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -34,9 +28,26 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function CurrentPrice() {
+  const data = useExchangeStore((s) => s.data);
+  const selected = useExchangeStore((s) => s.selectedExchange);
+  const selectedData = data.find((d) => d.exchange === selected);
+  const currentPrice = selectedData?.internal_pricing;
+  const priceChange = 5;
+  let priceChangeText = "-";
+  let priceChangeColor = "text-gray-400";
+  if (typeof priceChange === "number") {
+    priceChangeText = `${priceChange > 0 ? "+" : ""}${priceChange.toFixed()}%`;
+    priceChangeColor =
+      priceChange > 0
+        ? "text-green-600"
+        : priceChange < 0
+        ? "text-red-600"
+        : "text-gray-400";
+  }
+
   return (
     <Card className="grid grid-cols-2">
-      <div>
+      <div className="flex flex-col justify-between">
         <CardHeader>
           <CardTitle className="flex gap-1 items-center font-normal">
             <DollarSign
@@ -47,34 +58,19 @@ export default function CurrentPrice() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center gap-2">
-          <p className="text-3xl font-medium">$131</p>
-          <p>3.75%</p>
+          <p className="text-xl font-medium">
+            {currentPrice !== undefined ? `$${currentPrice.toFixed(8)}` : "-"}
+          </p>
+          <span className={`text-lg font-medium ${priceChangeColor}`}>
+            {priceChangeText}
+          </span>
         </CardContent>
       </div>
       <ChartContainer config={chartConfig}>
         <AreaChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={false} />
-          {/* <XAxis
-            dataKey="month"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={(value) => value.slice(0, 3)}
-          /> */}
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
           <defs>
-            {/* <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient> */}
             <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
               <stop
                 offset="5%"

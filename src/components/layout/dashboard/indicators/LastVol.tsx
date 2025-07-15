@@ -1,48 +1,54 @@
 import React from "react";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import { ChartColumnBig, DollarSign, TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartColumnBig } from "lucide-react";
+import { Area, AreaChart, CartesianGrid } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useExchangeStore } from "@/store/exchangeStore";
+
 export const description = "An area chart with gradient fill";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+const staticChartData = [
+  { month: "January", volume: 186 },
+  { month: "February", volume: 305 },
+  { month: "March", volume: 237 },
+  { month: "April", volume: 73 },
+  { month: "May", volume: 209 },
+  { month: "June", volume: 214 },
 ];
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  volume: {
+    label: "Volume",
     color: "var(--chart-1)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
 export default function LastVol() {
+  const data = useExchangeStore((s) => s.data);
+  const selected = useExchangeStore((s) => s.selectedExchange);
+  const selectedData = data.find((d) => d.exchange === selected);
+  const lastVol = selectedData?.generated_volume;
+  const volChange = 123;
+  let volChangeText = "-";
+  let volChangeColor = "text-gray-400";
+  if (typeof volChange === "number") {
+    volChangeText = `${volChange > 0 ? "+" : ""}${volChange.toFixed()}%`;
+    volChangeColor =
+      volChange > 0
+        ? "text-green-600"
+        : volChange < 0
+        ? "text-red-600"
+        : "text-gray-400";
+  }
+
   return (
     <Card className="grid grid-cols-2">
-      <div>
+      <div className="flex flex-col justify-between">
         <CardHeader>
-          <CardTitle className="flex gap-3 items-center font-normal">
+          <CardTitle className="flex gap-2 items-center font-normal">
             <ChartColumnBig
               size={30}
               className="bg-[#F3EE8D] text-primary-foreground p-1.5 rounded"
@@ -51,53 +57,30 @@ export default function LastVol() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center gap-2">
-          <p className="text-3xl font-medium">$131</p>
-          <p>3.75%</p>
+          <p className="text-xl font-medium">
+            {lastVol !== undefined ? `$${lastVol.toLocaleString()}` : "-"}
+          </p>
+          <span className={`text-lg font-medium ${volChangeColor}`}>
+            {volChangeText}
+          </span>
         </CardContent>
       </div>
       <ChartContainer config={chartConfig}>
-        <AreaChart accessibilityLayer data={chartData}>
+        <AreaChart accessibilityLayer data={staticChartData}>
           <CartesianGrid vertical={false} />
-          {/* <XAxis
-            dataKey="month"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={(value) => value.slice(0, 3)}
-          /> */}
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
           <defs>
-            {/* <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient> */}
-            <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-mobile)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-mobile)"
-                stopOpacity={0.1}
-              />
+            <linearGradient id="fillVolume" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <Area
-            dataKey="mobile"
+            dataKey="volume"
             type="natural"
-            fill="url(#fillMobile)"
+            fill="url(#fillVolume)"
             fillOpacity={0.4}
-            stroke="var(--color-mobile)"
+            stroke="var(--chart-1)"
             stackId="a"
           />
         </AreaChart>

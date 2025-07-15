@@ -1,14 +1,13 @@
 import React from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { useExchangeStore } from "@/store/exchangeStore";
 
-export default function Header({
-  selectedExchange,
-  setSelectedChange,
-}: {
-  selectedExchange: string;
-  setSelectedChange: (value: string) => void;
-}) {
+export default function Header({ exchanges }: { exchanges: string[] }) {
+  const selectedExchange = useExchangeStore((state) => state.selectedExchange);
+  const setSelectedExchange = useExchangeStore(
+    (state) => state.setSelectedExchange
+  );
   return (
     <header className="flex items-center gap-10">
       <Image
@@ -19,32 +18,20 @@ export default function Header({
         priority={true}
       />
       <section className="space-x-3">
-        <Button
-          className={
-            selectedExchange === "binance"
-              ? "rounded-full bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none"
-              : "bg-card rounded-full text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none"
-          }
-          size={"lg"}
-          onClick={() => {
-            setSelectedChange("binance");
-          }}
-        >
-          Binance
-        </Button>
-        <Button
-          className={
-            selectedExchange === "kucoin"
-              ? "rounded-full bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none"
-              : "bg-card rounded-full text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none"
-          }
-          size={"lg"}
-          onClick={() => {
-            setSelectedChange("kucoin");
-          }}
-        >
-          Kucoin
-        </Button>
+        {exchanges.map((exchange) => (
+          <Button
+            key={exchange}
+            className={
+              selectedExchange === exchange
+                ? "rounded-full bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none"
+                : "bg-card rounded-full text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none"
+            }
+            size={"lg"}
+            onClick={() => setSelectedExchange(exchange)}
+          >
+            {exchange}
+          </Button>
+        ))}
       </section>
     </header>
   );
