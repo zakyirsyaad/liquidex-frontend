@@ -1,14 +1,14 @@
 import React from "react";
 import {
   Card,
-  CardAction,
+  // CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
+  // CardDescription,
+  // CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Box, Warehouse } from "lucide-react";
+import { Warehouse } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useExchangeStore } from "@/store/exchangeStore";
 

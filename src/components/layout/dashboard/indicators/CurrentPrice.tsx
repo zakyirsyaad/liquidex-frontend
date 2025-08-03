@@ -1,7 +1,5 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-import { DollarSign } from "lucide-react";
 import { Area, AreaChart, CartesianGrid } from "recharts";
 import {
   ChartConfig,
@@ -9,21 +7,15 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { DollarSign } from "lucide-react";
 import { useExchangeStore } from "@/store/exchangeStore";
+import { useMetrics } from "@/hook/useMetrics";
 
-export const description = "An area chart with gradient fill";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
+export const description = "Price Comparison Chart";
 const chartConfig = {
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
+  price: {
+    label: "Price",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
@@ -32,11 +24,19 @@ export default function CurrentPrice() {
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
   const currentPrice = selectedData?.internal_pricing;
-  const priceChange = 5;
-  let priceChangeText = "-";
+
+  // Get price change from metrics
+  const { percentageChanges, metrics } = useMetrics(
+    selectedData?.exchange || "",
+    selectedData?.pair || ""
+  );
+
+  const priceChange = percentageChanges?.price_change || 0;
+  let priceChangeText = "0.00%";
   let priceChangeColor = "text-gray-400";
-  if (typeof priceChange === "number") {
-    priceChangeText = `${priceChange > 0 ? "+" : ""}${priceChange.toFixed()}%`;
+
+  if (priceChange !== 0) {
+    priceChangeText = `${priceChange > 0 ? "+" : ""}${priceChange.toFixed(2)}%`;
     priceChangeColor =
       priceChange > 0
         ? "text-green-600"
@@ -44,6 +44,16 @@ export default function CurrentPrice() {
         ? "text-red-600"
         : "text-gray-400";
   }
+
+  // Transform metrics data for chart
+  const chartData = React.useMemo(() => {
+    if (!metrics || metrics.length === 0) return [];
+
+    return metrics.map((metric, index) => ({
+      time: `T${index + 1}`,
+      price: metric.current_price,
+    }));
+  }, [metrics]);
 
   return (
     <Card className="grid grid-cols-2">
@@ -67,30 +77,30 @@ export default function CurrentPrice() {
         </CardContent>
       </div>
       <ChartContainer config={chartConfig}>
-        <AreaChart accessibilityLayer data={chartData}>
-          <CartesianGrid vertical={false} />
-          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <AreaChart accessibilityLayer data={chartData} width={400} height={200}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+          <ChartTooltip
+            cursor={false}
+            content={
+              <ChartTooltipContent
+                labelFormatter={(value) => `Time: ${value}`}
+                formatter={(value) => [`$${Number(value).toFixed(8)}`, "Price"]}
+              />
+            }
+          />
           <defs>
-            <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-mobile)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-mobile)"
-                stopOpacity={0.1}
-              />
+            <linearGradient id="fillPrice" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#F3EE8D" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#F3EE8D" stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <Area
-            dataKey="mobile"
-            type="natural"
-            fill="url(#fillMobile)"
+            dataKey="price"
+            type="monotone"
+            fill="url(#fillPrice)"
             fillOpacity={0.4}
-            stroke="var(--color-mobile)"
-            stackId="a"
+            stroke="#F3EE8D"
+            strokeWidth={2}
           />
         </AreaChart>
       </ChartContainer>

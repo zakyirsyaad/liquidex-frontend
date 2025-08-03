@@ -1,16 +1,12 @@
 import React from "react";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
+import { useExchangeStore } from "@/store/exchangeStore";
 
 export default function Spread() {
+  const data = useExchangeStore((s) => s.data);
+  const selected = useExchangeStore((s) => s.selectedExchange);
+  const selectedData = data.find((d) => d.exchange === selected);
   return (
     <Card>
       <CardHeader>
@@ -24,7 +20,9 @@ export default function Spread() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-medium">1.5</p>
+        <p className="text-2xl font-medium">
+          {selectedData?.spread.toLocaleString()}
+        </p>
       </CardContent>
     </Card>
   );

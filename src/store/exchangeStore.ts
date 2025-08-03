@@ -10,6 +10,16 @@ export type ExchangeData = {
   deployed_sell: number;
   estimated_fee: number;
   internal_pricing: number;
+  depth_plus_2: number;
+  depth_minus_2: number;
+  spread: number;
+  avg_24h_price: number;
+  volume_24h_statistic: string[];
+  spread_24h_statistic: number[];
+  depth_minus_2_24h_statistic: number[];
+  depth_plus_2_24h_statistic: number[];
+  usdt_balance_24h_statistic: number[];
+  token_balance_24h_statistic: number[];
 };
 
 export type DashboardStore = {

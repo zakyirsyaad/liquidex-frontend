@@ -1,0 +1,55 @@
+import { supabase } from "./supabase";
+import { ExchangeData } from "@/store/exchangeStore";
+
+export async function saveMetricsToSupabase(exchangeData: ExchangeData[]) {
+  try {
+    const metricsToInsert = exchangeData.map((exchange) => ({
+      exchange: exchange.exchange,
+      pair: exchange.pair,
+      current_price: exchange.internal_pricing,
+      last_vol_24h: exchange.generated_volume,
+      depth_plus: exchange.depth_plus_2,
+      depth_minus: exchange.depth_minus_2,
+    }));
+
+    const { data, error } = await supabase
+      .from("exchange_metrics")
+      .insert(metricsToInsert)
+      .select();
+
+    if (error) throw error;
+
+    console.log("Metrics saved successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("Error saving metrics:", error);
+    throw error;
+  }
+}
+
+// Fungsi untuk menyimpan single metric
+export async function saveSingleMetric(exchange: ExchangeData) {
+  try {
+    const { data, error } = await supabase
+      .from("exchange_metrics")
+      .insert([
+        {
+          exchange: exchange.exchange,
+          pair: exchange.pair,
+          current_price: exchange.internal_pricing,
+          last_vol_24h: exchange.generated_volume,
+          depth_plus: exchange.depth_plus_2,
+          depth_minus: exchange.depth_minus_2,
+        },
+      ])
+      .select();
+
+    if (error) throw error;
+
+    console.log("Single metric saved successfully:", data);
+    return data[0];
+  } catch (error) {
+    console.error("Error saving single metric:", error);
+    throw error;
+  }
+}

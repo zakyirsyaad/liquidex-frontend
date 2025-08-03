@@ -9,16 +9,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useExchangeStore } from "@/store/exchangeStore";
+import { useMetrics } from "@/hook/useMetrics";
 
-export const description = "An area chart with gradient fill";
-const staticChartData = [
-  { month: "January", volume: 186 },
-  { month: "February", volume: 305 },
-  { month: "March", volume: 237 },
-  { month: "April", volume: 73 },
-  { month: "May", volume: 209 },
-  { month: "June", volume: 214 },
-];
+export const description = "Volume 24h Statistic Chart";
 const chartConfig = {
   volume: {
     label: "Volume",
@@ -31,11 +24,19 @@ export default function LastVol() {
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
   const lastVol = selectedData?.generated_volume;
-  const volChange = 123;
-  let volChangeText = "-";
+
+  // Get volume change from metrics
+  const { percentageChanges } = useMetrics(
+    selectedData?.exchange || "",
+    selectedData?.pair || ""
+  );
+
+  const volChange = percentageChanges?.volume_change || 0;
+  let volChangeText = "0.00%";
   let volChangeColor = "text-gray-400";
-  if (typeof volChange === "number") {
-    volChangeText = `${volChange > 0 ? "+" : ""}${volChange.toFixed()}%`;
+
+  if (volChange !== 0) {
+    volChangeText = `${volChange > 0 ? "+" : ""}${volChange.toFixed(2)}%`;
     volChangeColor =
       volChange > 0
         ? "text-green-600"
@@ -43,6 +44,43 @@ export default function LastVol() {
         ? "text-red-600"
         : "text-gray-400";
   }
+
+  // Transform volume_24h_statistic data for chart
+  const chartData = React.useMemo(() => {
+    if (!selectedData?.volume_24h_statistic) {
+      return [];
+    }
+
+    // Use actual data from volume_24h_statistic
+    const timeLabels: string[] = [];
+    const now = new Date();
+
+    for (let i = 0; i < selectedData.volume_24h_statistic.length; i++) {
+      const time = new Date(
+        now.getTime() -
+          ((selectedData.volume_24h_statistic.length - 1 - i) *
+            (24 * 60 * 60 * 1000)) /
+            selectedData.volume_24h_statistic.length
+      );
+      const timeLabel =
+        time.toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }) +
+        ": " +
+        time.toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      timeLabels.push(timeLabel);
+    }
+
+    return selectedData.volume_24h_statistic.map((volume, index) => ({
+      time: timeLabels[index],
+      volume: parseFloat(volume.toString()),
+    }));
+  }, [selectedData]);
 
   return (
     <Card className="grid grid-cols-2">
@@ -66,22 +104,33 @@ export default function LastVol() {
         </CardContent>
       </div>
       <ChartContainer config={chartConfig}>
-        <AreaChart accessibilityLayer data={staticChartData}>
-          <CartesianGrid vertical={false} />
-          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <AreaChart accessibilityLayer data={chartData} width={400} height={200}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+          <ChartTooltip
+            cursor={false}
+            content={
+              <ChartTooltipContent
+                labelFormatter={(value) => `Time: ${value}`}
+                formatter={(value) => [
+                  `$${Number(value).toLocaleString()}`,
+                  "Volume",
+                ]}
+              />
+            }
+          />
           <defs>
             <linearGradient id="fillVolume" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0.1} />
+              <stop offset="5%" stopColor="#F3EE8D" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#F3EE8D" stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <Area
             dataKey="volume"
-            type="natural"
+            type="monotone"
             fill="url(#fillVolume)"
             fillOpacity={0.4}
-            stroke="var(--chart-1)"
-            stackId="a"
+            stroke="#F3EE8D"
+            strokeWidth={2}
           />
         </AreaChart>
       </ChartContainer>
