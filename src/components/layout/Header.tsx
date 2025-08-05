@@ -20,25 +20,26 @@ export default function Header({ exchanges, realTimeStatus }: HeaderProps) {
     (state) => state.setSelectedExchange
   );
   return (
-    <header className="flex items-center justify-between">
-      <div className="flex items-center gap-10">
+    <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-10 w-full md:w-auto">
         <Image
           src={"/LIQUIDEX 1.svg"}
           alt="Liquidex logo"
-          width={100}
-          height={100}
+          width={80}
+          height={80}
+          className="md:w-[100px] md:h-[100px]"
           priority={true}
         />
-        <section className="space-x-3">
+        <section className="flex flex-wrap gap-2 md:space-x-3">
           {exchanges.map((exchange) => (
             <Button
               key={exchange}
               className={
                 selectedExchange === exchange
-                  ? "rounded-full bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none"
-                  : "bg-card rounded-full text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none"
+                  ? "rounded-full bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm md:text-base"
+                  : "bg-card rounded-full text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm md:text-base"
               }
-              size={"lg"}
+              size={"sm"}
               onClick={() => setSelectedExchange(exchange)}
             >
               {exchange}
@@ -47,7 +48,11 @@ export default function Header({ exchanges, realTimeStatus }: HeaderProps) {
         </section>
       </div>
 
-      {realTimeStatus && <RealTimeIndicator {...realTimeStatus} />}
+      {realTimeStatus && (
+        <div className="w-full md:w-auto">
+          <RealTimeIndicator {...realTimeStatus} />
+        </div>
+      )}
     </header>
   );
 }

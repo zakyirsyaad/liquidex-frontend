@@ -8,7 +8,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+import { ResponsiveChart } from "@/components/ui/ResponsiveChart";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export const description = "Token Balance 24h Chart";
@@ -56,9 +56,13 @@ export default function TokenBalance() {
   }, [selectedData]);
 
   return (
-    <Card className="p-6">
-      <h1 className="text-xl font-medium">Token Balance</h1>
-      <AreaChart data={chartData} width={800} height={500}>
+    <ResponsiveChart title="Token Balance">
+      <AreaChart
+        data={chartData}
+        width={800}
+        height={400}
+        className="w-full h-auto"
+      >
         <defs>
           <linearGradient id="fillTokenBalance" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#F3EE8D" stopOpacity={0.8} />
@@ -69,17 +73,17 @@ export default function TokenBalance() {
         <XAxis
           dataKey="time"
           stroke="#9CA3AF"
-          tick={{ fill: "#9CA3AF", fontSize: 10 }}
+          tick={{ fill: "#9CA3AF", fontSize: 8 }}
           axisLine={{ stroke: "#374151" }}
           tickLine={{ stroke: "#374151" }}
           interval="preserveStartEnd"
           angle={-45}
           textAnchor="end"
-          height={80}
+          height={60}
         />
         <YAxis
           stroke="#9CA3AF"
-          tick={{ fill: "#9CA3AF", fontSize: 10 }}
+          tick={{ fill: "#9CA3AF", fontSize: 8 }}
           axisLine={{ stroke: "#374151" }}
           tickLine={{ stroke: "#374151" }}
           // domain={[0, 25000000]}
@@ -107,6 +111,6 @@ export default function TokenBalance() {
           strokeWidth={2}
         />
       </AreaChart>
-    </Card>
+    </ResponsiveChart>
   );
 }

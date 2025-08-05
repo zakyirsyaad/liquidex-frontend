@@ -7,8 +7,8 @@ import CurrentInventory from "./indicators/CurrentInventory";
 
 export default function Indicators() {
   return (
-    <section className="grid grid-cols-3 gap-3">
-      <div className=" col-span-2 grid grid-cols-3 gap-3">
+    <section className="grid 2xl:grid-cols-3 gap-3">
+      <div className=" 2xl:col-span-2 grid grid-cols-3 gap-3">
         <CurrentPrice />
         <DeployedOrder />
         <LastVol />

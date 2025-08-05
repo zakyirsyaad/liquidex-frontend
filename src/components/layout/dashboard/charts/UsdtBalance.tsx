@@ -8,7 +8,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+import { ResponsiveChart } from "@/components/ui/ResponsiveChart";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export const description = "USDT Balance 24h Chart";
@@ -56,9 +56,13 @@ export default function UsdtBalance() {
   }, [selectedData]);
 
   return (
-    <Card className="p-6">
-      <h1 className="text-xl font-medium">USDT Balance</h1>
-      <AreaChart data={chartData} width={800} height={500}>
+    <ResponsiveChart title="USDT Balance">
+      <AreaChart
+        data={chartData}
+        width={800}
+        height={400}
+        className="w-full h-auto"
+      >
         <defs>
           <linearGradient id="fillUsdtBalance" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#F3EE8D" stopOpacity={0.8} />
@@ -106,6 +110,6 @@ export default function UsdtBalance() {
           strokeWidth={2}
         />
       </AreaChart>
-    </Card>
+    </ResponsiveChart>
   );
 }

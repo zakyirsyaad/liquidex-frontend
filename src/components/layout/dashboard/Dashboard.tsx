@@ -36,7 +36,7 @@ export default function Dashboard() {
   }, [exchanges, selectedExchange, setSelectedExchange]);
 
   return (
-    <main className="xl:px-20 xl:py-10 space-y-5">
+    <main className="px-4 py-6 md:px-8 lg:px-12 xl:px-20 xl:py-10 space-y-4 md:space-y-5">
       <Header
         exchanges={exchanges}
         realTimeStatus={{
@@ -49,12 +49,12 @@ export default function Dashboard() {
 
       <Indicators />
       <Amounts />
-      <section className="grid grid-cols-2 gap-5">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
         <SpreadBid />
         <VolumeStat />
       </section>
       <Depths />
-      <section className="grid grid-cols-2 gap-5">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
         <UsdtBalance />
         <TokenBalance />
       </section>

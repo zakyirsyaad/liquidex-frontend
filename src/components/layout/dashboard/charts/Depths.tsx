@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+import { ResponsiveChart } from "@/components/ui/ResponsiveChart";
 import { useExchangeStore } from "@/store/exchangeStore";
 import { useMetrics } from "@/hook/useMetrics";
 import { ChartContainer } from "@/components/ui/chart";
@@ -82,8 +82,7 @@ export default function Depths() {
   }, [selectedData]);
 
   return (
-    <Card className="p-6">
-      <h1 className="text-xl font-medium">Depths</h1>
+    <ResponsiveChart title="Depths">
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
@@ -176,6 +175,6 @@ export default function Depths() {
           />
         </AreaChart>
       </ChartContainer>
-    </Card>
+    </ResponsiveChart>
   );
 }

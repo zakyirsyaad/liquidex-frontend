@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { Card } from "@/components/ui/card";
+import { ResponsiveChart } from "@/components/ui/ResponsiveChart";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export const description = "24h Volume Statistic Chart";
@@ -63,10 +63,14 @@ export default function VolumeStat() {
   }, [selectedData]);
 
   return (
-    <Card className="p-6">
-      <h1 className="text-xl font-medium">24h Volume Statistic</h1>
+    <ResponsiveChart title="24h Volume Statistic">
       <ChartContainer config={chartConfig}>
-        <AreaChart data={chartData} width={800} height={500}>
+        <AreaChart
+          data={chartData}
+          width={800}
+          height={400}
+          className="w-full h-auto"
+        >
           <defs>
             <linearGradient id="fillVolume" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F3EE8D" stopOpacity={0.8} />
@@ -117,6 +121,6 @@ export default function VolumeStat() {
           />
         </AreaChart>
       </ChartContainer>
-    </Card>
+    </ResponsiveChart>
   );
 }

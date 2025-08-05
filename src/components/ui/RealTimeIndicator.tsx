@@ -39,7 +39,7 @@ export function RealTimeIndicator({
   };
 
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm">
       <div className="flex items-center gap-1">
         <div
           className={`w-2 h-2 rounded-full ${getStatusColor()} animate-pulse`}
@@ -48,7 +48,9 @@ export function RealTimeIndicator({
       </div>
 
       {lastUpdate && (
-        <span className="text-gray-400">{formatLastUpdate(lastUpdate)}</span>
+        <span className="text-gray-400 text-xs">
+          {formatLastUpdate(lastUpdate)}
+        </span>
       )}
 
       {error && (

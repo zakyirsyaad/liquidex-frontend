@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "recharts";
 
-import { Card } from "@/components/ui/card";
+import { ResponsiveChart } from "@/components/ui/ResponsiveChart";
 import { useExchangeStore } from "@/store/exchangeStore";
 import { ChartContainer } from "@/components/ui/chart";
 
@@ -64,10 +64,14 @@ export default function SpreadBid() {
   }, [selectedData]);
 
   return (
-    <Card className="p-6">
-      <h1 className="text-xl font-medium">Spread Bid Ask</h1>
+    <ResponsiveChart title="Spread Bid Ask">
       <ChartContainer config={chartConfig}>
-        <AreaChart data={chartData} width={800} height={500}>
+        <AreaChart
+          data={chartData}
+          width={800}
+          height={400}
+          className="w-full h-auto"
+        >
           <defs>
             <linearGradient id="fillSpread" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F3EE8D" stopOpacity={0.8} />
@@ -114,6 +118,6 @@ export default function SpreadBid() {
           />
         </AreaChart>
       </ChartContainer>
-    </Card>
+    </ResponsiveChart>
   );
 }
