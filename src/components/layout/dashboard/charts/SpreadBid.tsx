@@ -78,9 +78,13 @@ export default function SpreadBid() {
           <XAxis
             dataKey="time"
             stroke="#9CA3AF"
-            tick={{ fill: "#9CA3AF" }}
+            tick={{ fill: "#9CA3AF", fontSize: 10 }}
             axisLine={{ stroke: "#374151" }}
             tickLine={{ stroke: "#374151" }}
+            interval="preserveStartEnd"
+            angle={-45}
+            textAnchor="end"
+            height={80}
           />
           <YAxis
             stroke="#9CA3AF"
@@ -89,6 +93,7 @@ export default function SpreadBid() {
             tickLine={{ stroke: "#374151" }}
             domain={[0, 2.5]}
             ticks={[0, 0.5, 1.0, 1.5, 2.0, 2.5]}
+            tickFormatter={(value) => value.toFixed(2)}
           />
           <Tooltip
             contentStyle={{

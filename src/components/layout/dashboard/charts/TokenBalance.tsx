@@ -1,6 +1,5 @@
 import React from "react";
 
-import { DollarSign, TrendingUp } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -13,13 +12,6 @@ import { Card } from "@/components/ui/card";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export const description = "Token Balance 24h Chart";
-
-const chartConfig = {
-  token_balance: {
-    label: "Token Balance",
-    color: "#F3EE8D",
-  },
-};
 
 export default function TokenBalance() {
   const data = useExchangeStore((s) => s.data);
@@ -77,15 +69,22 @@ export default function TokenBalance() {
         <XAxis
           dataKey="time"
           stroke="#9CA3AF"
-          tick={{ fill: "#9CA3AF" }}
+          tick={{ fill: "#9CA3AF", fontSize: 10 }}
           axisLine={{ stroke: "#374151" }}
           tickLine={{ stroke: "#374151" }}
+          interval="preserveStartEnd"
+          angle={-45}
+          textAnchor="end"
+          height={80}
         />
         <YAxis
           stroke="#9CA3AF"
-          tick={{ fill: "#9CA3AF" }}
+          tick={{ fill: "#9CA3AF", fontSize: 10 }}
           axisLine={{ stroke: "#374151" }}
           tickLine={{ stroke: "#374151" }}
+          // domain={[0, 25000000]}
+          // ticks={[0, 15000000, 17500000, 20000000, 22500000, 25000000]}
+          tickFormatter={(value) => Math.round(value).toLocaleString()}
         />
         <Tooltip
           contentStyle={{

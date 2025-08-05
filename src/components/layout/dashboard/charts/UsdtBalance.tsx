@@ -1,6 +1,5 @@
 import React from "react";
 
-import { DollarSign, TrendingUp } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -13,13 +12,6 @@ import { Card } from "@/components/ui/card";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export const description = "USDT Balance 24h Chart";
-
-const chartConfig = {
-  usdt_balance: {
-    label: "USDT Balance",
-    color: "#F3EE8D",
-  },
-};
 
 export default function UsdtBalance() {
   const data = useExchangeStore((s) => s.data);
@@ -77,15 +69,21 @@ export default function UsdtBalance() {
         <XAxis
           dataKey="time"
           stroke="#9CA3AF"
-          tick={{ fill: "#9CA3AF" }}
+          tick={{ fill: "#9CA3AF", fontSize: 10 }}
           axisLine={{ stroke: "#374151" }}
           tickLine={{ stroke: "#374151" }}
+          interval="preserveStartEnd"
+          angle={-45}
+          textAnchor="end"
+          height={80}
         />
         <YAxis
           stroke="#9CA3AF"
           tick={{ fill: "#9CA3AF" }}
           axisLine={{ stroke: "#374151" }}
           tickLine={{ stroke: "#374151" }}
+          domain={[0, "dataMax + dataMax * 0.2"]}
+          tickFormatter={(value) => Math.round(value).toLocaleString()}
         />
         <Tooltip
           contentStyle={{

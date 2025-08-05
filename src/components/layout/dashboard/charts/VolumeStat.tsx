@@ -77,15 +77,22 @@ export default function VolumeStat() {
           <XAxis
             dataKey="time"
             stroke="#9CA3AF"
-            tick={{ fill: "#9CA3AF" }}
+            tick={{ fill: "#9CA3AF", fontSize: 10 }}
             axisLine={{ stroke: "#374151" }}
             tickLine={{ stroke: "#374151" }}
+            interval="preserveStartEnd"
+            angle={-45}
+            textAnchor="end"
+            height={80}
           />
           <YAxis
             stroke="#9CA3AF"
             tick={{ fill: "#9CA3AF" }}
             axisLine={{ stroke: "#374151" }}
             tickLine={{ stroke: "#374151" }}
+            domain={[0, 100000]}
+            ticks={[0, 25000, 50000, 75000, 100000]}
+            tickFormatter={(value) => Math.round(value).toLocaleString()}
           />
           <Tooltip
             contentStyle={{

@@ -106,7 +106,7 @@ export default function Depths() {
       </div>
       <ChartContainer
         config={chartConfig}
-        className="aspect-auto h-[250px] w-full"
+        className="aspect-video h-[500px] w-full"
       >
         <AreaChart data={chartData}>
           <defs>
@@ -123,15 +123,20 @@ export default function Depths() {
           <XAxis
             dataKey="time"
             stroke="#9CA3AF"
-            tick={{ fill: "#9CA3AF" }}
+            tick={{ fill: "#9CA3AF", fontSize: 10 }}
             axisLine={{ stroke: "#374151" }}
             tickLine={{ stroke: "#374151" }}
+            interval="preserveStartEnd"
+            angle={-45}
+            textAnchor="end"
+            height={80}
           />
           <YAxis
             stroke="#9CA3AF"
             tick={{ fill: "#9CA3AF" }}
             axisLine={{ stroke: "#374151" }}
             tickLine={{ stroke: "#374151" }}
+            tickFormatter={(value) => Math.round(value).toLocaleString()}
           />
           <ReferenceLine y={0} stroke="#F3EE8D" strokeWidth={2} />
           <Tooltip

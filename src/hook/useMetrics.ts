@@ -38,6 +38,28 @@ export function useMetrics(exchange: string, pair: string) {
     };
 
     fetchMetrics();
+
+    // Set up real-time subscription for metrics updates
+    const subscription = supabase
+      .channel("exchange_metrics_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "exchange_metrics",
+          filter: `exchange=eq.${exchange} AND pair=eq.${pair}`,
+        },
+        () => {
+          // Refetch data when there are changes
+          fetchMetrics();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [exchange, pair]);
 
   return { metrics, loading, percentageChanges };
