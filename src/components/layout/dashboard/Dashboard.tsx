@@ -16,7 +16,15 @@ export default function Dashboard() {
   const setSelectedExchange = useExchangeStore(
     (state) => state.setSelectedExchange
   );
-  const data = useExchangeStore((state) => state.data);
+  const selectedDataSource = useExchangeStore(
+    (state) => state.selectedDataSource
+  );
+  const setSelectedDataSource = useExchangeStore(
+    (state) => state.setSelectedDataSource
+  );
+  const getCurrentData = useExchangeStore((state) => state.getCurrentData);
+
+  const data = getCurrentData();
 
   // Real-time data with default settings
   const { isLoading, lastUpdate, error } = useRealTimeData({
@@ -29,11 +37,19 @@ export default function Dashboard() {
     [data]
   );
 
+  // Auto-select first exchange when data source changes or when no exchange is selected
   React.useEffect(() => {
-    if (!selectedExchange && exchanges.length > 0) {
+    if (exchanges.length > 0 && !selectedExchange) {
       setSelectedExchange(exchanges[0]);
     }
   }, [exchanges, selectedExchange, setSelectedExchange]);
+
+  // Auto-select first exchange when switching data sources
+  React.useEffect(() => {
+    if (exchanges.length > 0) {
+      setSelectedExchange(exchanges[0]);
+    }
+  }, [selectedDataSource, exchanges, setSelectedExchange]);
 
   return (
     <main className="px-4 py-6 md:px-8 lg:px-12 xl:px-20 xl:py-10 space-y-4 md:space-y-5">
@@ -45,7 +61,26 @@ export default function Dashboard() {
           lastUpdate,
           error,
         }}
+        selectedDataSource={selectedDataSource}
+        onDataSourceChange={setSelectedDataSource}
       />
+
+      {/* Data Source Indicator */}
+      <div className="flex items-center justify-center">
+        <div className="bg-card rounded-lg px-4 py-2 border border-[#F3EE8D]/20">
+          <span className="text-sm text-muted-foreground">
+            Active Data Source:{" "}
+          </span>
+          <span className="text-[#F3EE8D] font-medium">
+            {selectedDataSource}
+          </span>
+          {isLoading && (
+            <span className="ml-2 text-xs text-muted-foreground">
+              (Updating...)
+            </span>
+          )}
+        </div>
+      </div>
 
       <Indicators />
       <Amounts />

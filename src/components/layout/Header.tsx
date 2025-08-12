@@ -12,9 +12,16 @@ interface HeaderProps {
     lastUpdate: Date | null;
     error: string | null;
   };
+  selectedDataSource: "KOM" | "BBA";
+  onDataSourceChange: (source: "KOM" | "BBA") => void;
 }
 
-export default function Header({ exchanges, realTimeStatus }: HeaderProps) {
+export default function Header({
+  exchanges,
+  realTimeStatus,
+  selectedDataSource,
+  onDataSourceChange,
+}: HeaderProps) {
   const selectedExchange = useExchangeStore((state) => state.selectedExchange);
   const setSelectedExchange = useExchangeStore(
     (state) => state.setSelectedExchange
@@ -30,21 +37,51 @@ export default function Header({ exchanges, realTimeStatus }: HeaderProps) {
           className="md:w-[100px] md:h-[100px]"
           priority={true}
         />
-        <section className="flex flex-wrap gap-2 md:space-x-3">
-          {exchanges.map((exchange) => (
+
+        {/* Data Source Selector */}
+        <section className="flex flex-col gap-2">
+          <div className="flex gap-2">
             <Button
-              key={exchange}
               className={
-                selectedExchange === exchange
-                  ? "rounded-full bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm md:text-base"
-                  : "bg-card rounded-full text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm md:text-base"
+                selectedDataSource === "KOM"
+                  ? "rounded bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm"
+                  : "bg-card rounded text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm"
               }
               size={"sm"}
-              onClick={() => setSelectedExchange(exchange)}
+              onClick={() => onDataSourceChange("KOM")}
             >
-              {exchange}
+              KOM Data
             </Button>
-          ))}
+            <Button
+              className={
+                selectedDataSource === "BBA"
+                  ? "rounded bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm"
+                  : "bg-card rounded text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm"
+              }
+              size={"sm"}
+              onClick={() => onDataSourceChange("BBA")}
+            >
+              BBA Data
+            </Button>
+          </div>
+
+          {/* Exchange Selector */}
+          <div className="flex flex-wrap gap-2 md:space-x-3">
+            {exchanges.map((exchange) => (
+              <Button
+                key={exchange}
+                className={
+                  selectedExchange === exchange
+                    ? "rounded-full bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm md:text-base"
+                    : "bg-card rounded-full text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm md:text-base"
+                }
+                size={"sm"}
+                onClick={() => setSelectedExchange(exchange)}
+              >
+                {exchange}
+              </Button>
+            ))}
+          </div>
         </section>
       </div>
 

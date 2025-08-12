@@ -24,14 +24,27 @@ export type ExchangeData = {
 
 export type DashboardStore = {
   data: ExchangeData[];
+  bbaData: ExchangeData[];
   setData: (d: ExchangeData[]) => void;
+  setBBAData: (d: ExchangeData[]) => void;
   selectedExchange: string | null;
   setSelectedExchange: (e: string | null) => void;
+  selectedDataSource: "KOM" | "BBA";
+  setSelectedDataSource: (source: "KOM" | "BBA") => void;
+  getCurrentData: () => ExchangeData[];
 };
 
-export const useExchangeStore = create<DashboardStore>((set) => ({
+export const useExchangeStore = create<DashboardStore>((set, get) => ({
   data: [],
+  bbaData: [],
   setData: (d) => set({ data: d }),
+  setBBAData: (d) => set({ bbaData: d }),
   selectedExchange: null,
   setSelectedExchange: (e) => set({ selectedExchange: e }),
+  selectedDataSource: "KOM",
+  setSelectedDataSource: (source) => set({ selectedDataSource: source }),
+  getCurrentData: () => {
+    const state = get();
+    return state.selectedDataSource === "KOM" ? state.data : state.bbaData;
+  },
 }));

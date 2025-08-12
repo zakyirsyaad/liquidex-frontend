@@ -15,13 +15,15 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const setData = useExchangeStore((state) => state.setData);
+  const setBBAData = useExchangeStore((state) => state.setBBAData);
 
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const res = await fetch("/api/liquidex", {
+      // Fetch KOM data
+      const komRes = await fetch("/api/liquidex", {
         method: "GET",
         cache: "no-store",
         headers: {
@@ -30,30 +32,57 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
         },
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      // Fetch BBA data
+      const bbaRes = await fetch("/api/liquidex/bba", {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+
+      if (!komRes.ok) {
+        throw new Error(`KOM HTTP error! status: ${komRes.status}`);
       }
 
-      const json = await res.json();
+      if (!bbaRes.ok) {
+        throw new Error(`BBA HTTP error! status: ${bbaRes.status}`);
+      }
 
-      if (json && Array.isArray(json)) {
-        setData(json);
-        setLastUpdate(new Date());
+      const komJson = await komRes.json();
+      const bbaJson = await bbaRes.json();
 
-        // Auto-save metrics to Supabase
+      if (komJson && Array.isArray(komJson)) {
+        setData(komJson);
+
+        // Auto-save KOM metrics to Supabase
         try {
-          await saveMetricsToSupabase(json);
+          await saveMetricsToSupabase(komJson);
         } catch (saveError) {
-          console.error("Failed to save metrics:", saveError);
+          console.error("Failed to save KOM metrics:", saveError);
         }
       }
+
+      if (bbaJson && Array.isArray(bbaJson)) {
+        setBBAData(bbaJson);
+
+        // Auto-save BBA metrics to Supabase
+        try {
+          await saveMetricsToSupabase(bbaJson);
+        } catch (saveError) {
+          console.error("Failed to save BBA metrics:", saveError);
+        }
+      }
+
+      setLastUpdate(new Date());
     } catch (err) {
       console.error("Error fetching real-time data:", err);
       setError(err instanceof Error ? err.message : "Unknown error occurred");
     } finally {
       setIsLoading(false);
     }
-  }, [setData]);
+  }, [setData, setBBAData]);
 
   // Initial fetch
   useEffect(() => {

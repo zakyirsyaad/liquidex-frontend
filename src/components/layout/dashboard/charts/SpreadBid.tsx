@@ -22,7 +22,8 @@ const chartConfig = {
 };
 
 export default function SpreadBid() {
-  const data = useExchangeStore((s) => s.data);
+  const getCurrentData = useExchangeStore((s) => s.getCurrentData);
+  const data = getCurrentData();
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
 
