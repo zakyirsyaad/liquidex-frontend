@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { useExchangeStore } from "@/store/exchangeStore";
 import { RealTimeIndicator } from "../ui/RealTimeIndicator";
+import { WalletAccess } from "@/hook/useWalletAccess";
 
 interface HeaderProps {
   exchanges: string[];
@@ -14,6 +15,7 @@ interface HeaderProps {
   };
   selectedDataSource: "KOM" | "BBA";
   onDataSourceChange: (source: "KOM" | "BBA") => void;
+  walletAccess: WalletAccess;
 }
 
 export default function Header({
@@ -21,7 +23,9 @@ export default function Header({
   realTimeStatus,
   selectedDataSource,
   onDataSourceChange,
+  walletAccess,
 }: HeaderProps) {
+  // const { address } = useAccount();
   const selectedExchange = useExchangeStore((state) => state.selectedExchange);
   const setSelectedExchange = useExchangeStore(
     (state) => state.setSelectedExchange
@@ -41,28 +45,32 @@ export default function Header({
         {/* Data Source Selector */}
         <section className="flex flex-col gap-2">
           <div className="flex gap-2">
-            <Button
-              className={
-                selectedDataSource === "KOM"
-                  ? "rounded bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm"
-                  : "bg-card rounded text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm"
-              }
-              size={"sm"}
-              onClick={() => onDataSourceChange("KOM")}
-            >
-              KOM Data
-            </Button>
-            <Button
-              className={
-                selectedDataSource === "BBA"
-                  ? "rounded bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm"
-                  : "bg-card rounded text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm"
-              }
-              size={"sm"}
-              onClick={() => onDataSourceChange("BBA")}
-            >
-              BBA Data
-            </Button>
+            {walletAccess.hasKOMAccess && (
+              <Button
+                className={
+                  selectedDataSource === "KOM"
+                    ? "rounded bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm"
+                    : "bg-card rounded text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm"
+                }
+                size={"sm"}
+                onClick={() => onDataSourceChange("KOM")}
+              >
+                KOM Data
+              </Button>
+            )}
+            {walletAccess.hasBBAAccess && (
+              <Button
+                className={
+                  selectedDataSource === "BBA"
+                    ? "rounded bg-[#F3EE8D]/50 border-2 border-[#F3EE8D] hover:bg-[#F3EE8D]/20 text-[#F3EE8D] transition-none text-sm"
+                    : "bg-card rounded text-[#F3EE8D] hover:bg-[#F3EE8D]/20 transition-none text-sm"
+                }
+                size={"sm"}
+                onClick={() => onDataSourceChange("BBA")}
+              >
+                BBA Data
+              </Button>
+            )}
           </div>
 
           {/* Exchange Selector */}
@@ -84,7 +92,6 @@ export default function Header({
           </div>
         </section>
       </div>
-
       {realTimeStatus && (
         <div className="w-full md:w-auto">
           <RealTimeIndicator {...realTimeStatus} />

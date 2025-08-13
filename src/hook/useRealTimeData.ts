@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useExchangeStore } from "@/store/exchangeStore";
 import { saveMetricsToSupabase } from "@/lib/autoSaveMetrics";
+import { useWalletAccess } from "./useWalletAccess";
 
 interface UseRealTimeDataOptions {
   interval?: number; // polling interval in milliseconds
@@ -16,62 +17,79 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const setData = useExchangeStore((state) => state.setData);
   const setBBAData = useExchangeStore((state) => state.setBBAData);
+  const setWalletAccess = useExchangeStore((state) => state.setWalletAccess);
+
+  // Get wallet access
+  const walletAccess = useWalletAccess();
+
+  // Update wallet access in store when it changes
+  useEffect(() => {
+    setWalletAccess({
+      hasKOMAccess: walletAccess.hasKOMAccess,
+      hasBBAAccess: walletAccess.hasBBAAccess,
+      accessibleExchanges: walletAccess.accessibleExchanges,
+    });
+  }, [walletAccess, setWalletAccess]);
 
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Fetch KOM data
-      const komRes = await fetch("/api/liquidex", {
-        method: "GET",
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-      });
+      // Only fetch data based on wallet access
+      if (walletAccess.hasKOMAccess) {
+        const komRes = await fetch("/api/liquidex", {
+          method: "GET",
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        });
 
-      // Fetch BBA data
-      const bbaRes = await fetch("/api/liquidex/bba", {
-        method: "GET",
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-      });
+        if (!komRes.ok) {
+          throw new Error(`KOM HTTP error! status: ${komRes.status}`);
+        }
 
-      if (!komRes.ok) {
-        throw new Error(`KOM HTTP error! status: ${komRes.status}`);
-      }
+        const komJson = await komRes.json();
 
-      if (!bbaRes.ok) {
-        throw new Error(`BBA HTTP error! status: ${bbaRes.status}`);
-      }
+        if (komJson && Array.isArray(komJson)) {
+          setData(komJson);
 
-      const komJson = await komRes.json();
-      const bbaJson = await bbaRes.json();
-
-      if (komJson && Array.isArray(komJson)) {
-        setData(komJson);
-
-        // Auto-save KOM metrics to Supabase
-        try {
-          await saveMetricsToSupabase(komJson);
-        } catch (saveError) {
-          console.error("Failed to save KOM metrics:", saveError);
+          // Auto-save KOM metrics to Supabase
+          try {
+            await saveMetricsToSupabase(komJson);
+          } catch (saveError) {
+            console.error("Failed to save KOM metrics:", saveError);
+          }
         }
       }
 
-      if (bbaJson && Array.isArray(bbaJson)) {
-        setBBAData(bbaJson);
+      if (walletAccess.hasBBAAccess) {
+        const bbaRes = await fetch("/api/liquidex/bba", {
+          method: "GET",
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        });
 
-        // Auto-save BBA metrics to Supabase
-        try {
-          await saveMetricsToSupabase(bbaJson);
-        } catch (saveError) {
-          console.error("Failed to save BBA metrics:", saveError);
+        if (!bbaRes.ok) {
+          throw new Error(`BBA HTTP error! status: ${bbaRes.status}`);
+        }
+
+        const bbaJson = await bbaRes.json();
+
+        if (bbaJson && Array.isArray(bbaJson)) {
+          setBBAData(bbaJson);
+
+          // Auto-save BBA metrics to Supabase
+          try {
+            await saveMetricsToSupabase(bbaJson);
+          } catch (saveError) {
+            console.error("Failed to save BBA metrics:", saveError);
+          }
         }
       }
 
@@ -82,16 +100,35 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
     } finally {
       setIsLoading(false);
     }
-  }, [setData, setBBAData]);
+  }, [
+    setData,
+    setBBAData,
+    walletAccess.hasKOMAccess,
+    walletAccess.hasBBAAccess,
+  ]);
 
   // Initial fetch
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (
+      walletAccess.isConnected &&
+      (walletAccess.hasKOMAccess || walletAccess.hasBBAAccess)
+    ) {
+      fetchData();
+    }
+  }, [
+    fetchData,
+    walletAccess.isConnected,
+    walletAccess.hasKOMAccess,
+    walletAccess.hasBBAAccess,
+  ]);
 
   // Set up polling
   useEffect(() => {
-    if (!enabled) {
+    if (
+      !enabled ||
+      !walletAccess.isConnected ||
+      (!walletAccess.hasKOMAccess && !walletAccess.hasBBAAccess)
+    ) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -109,7 +146,14 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
         intervalRef.current = null;
       }
     };
-  }, [enabled, interval, fetchData]);
+  }, [
+    enabled,
+    interval,
+    fetchData,
+    walletAccess.isConnected,
+    walletAccess.hasKOMAccess,
+    walletAccess.hasBBAAccess,
+  ]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -125,5 +169,6 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
     lastUpdate,
     error,
     refetch: fetchData,
+    walletAccess,
   };
 }

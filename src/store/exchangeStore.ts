@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { ExchangeType } from "@/lib/config/WalletConfig";
 
 export type ExchangeData = {
   exchange: string;
@@ -32,6 +33,20 @@ export type DashboardStore = {
   selectedDataSource: "KOM" | "BBA";
   setSelectedDataSource: (source: "KOM" | "BBA") => void;
   getCurrentData: () => ExchangeData[];
+  // Wallet access control
+  walletAccess: {
+    hasKOMAccess: boolean;
+    hasBBAAccess: boolean;
+    accessibleExchanges: ExchangeType[];
+  };
+  setWalletAccess: (access: {
+    hasKOMAccess: boolean;
+    hasBBAAccess: boolean;
+    accessibleExchanges: ExchangeType[];
+  }) => void;
+  // Get filtered data based on wallet access
+  getAccessibleData: () => ExchangeData[];
+  getAccessibleDataSource: () => "KOM" | "BBA" | null;
 };
 
 export const useExchangeStore = create<DashboardStore>((set, get) => ({
@@ -46,5 +61,49 @@ export const useExchangeStore = create<DashboardStore>((set, get) => ({
   getCurrentData: () => {
     const state = get();
     return state.selectedDataSource === "KOM" ? state.data : state.bbaData;
+  },
+  // Wallet access control
+  walletAccess: {
+    hasKOMAccess: false,
+    hasBBAAccess: false,
+    accessibleExchanges: [],
+  },
+  setWalletAccess: (access) => set({ walletAccess: access }),
+  // Get filtered data based on wallet access
+  getAccessibleData: () => {
+    const state = get();
+    const { hasKOMAccess, hasBBAAccess } = state.walletAccess;
+
+    if (hasKOMAccess && hasBBAAccess) {
+      // User has access to both, return current selected data
+      return state.getCurrentData();
+    } else if (hasKOMAccess) {
+      // User only has KOM access
+      return state.data;
+    } else if (hasBBAAccess) {
+      // User only has BBA access
+      return state.bbaData;
+    }
+
+    // No access
+    return [];
+  },
+  getAccessibleDataSource: () => {
+    const state = get();
+    const { hasKOMAccess, hasBBAAccess } = state.walletAccess;
+
+    if (hasKOMAccess && hasBBAAccess) {
+      // User has access to both, return current selection
+      return state.selectedDataSource;
+    } else if (hasKOMAccess) {
+      // User only has KOM access
+      return "KOM";
+    } else if (hasBBAAccess) {
+      // User only has BBA access
+      return "BBA";
+    }
+
+    // No access
+    return null;
   },
 }));
