@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card } from "@/components/ui/card";
 import { useExchangeStore } from "@/store/exchangeStore";
-import { useMetrics } from "@/hook/useMetrics";
+// import { useMetrics } from "@/hook/useMetrics";
 
 export default function Amounts() {
   const getCurrentData = useExchangeStore((s) => s.getCurrentData);
@@ -10,30 +10,30 @@ export default function Amounts() {
   const selectedData = data.find((d) => d.exchange === selected);
 
   // Get depth changes from metrics
-  const { percentageChanges } = useMetrics(
-    selectedData?.exchange || "",
-    selectedData?.pair || ""
-  );
+  // const { percentageChanges } = useMetrics(
+  //   selectedData?.exchange || "",
+  //   selectedData?.pair || ""
+  // );
 
-  const [isRefreshingMinus, setIsRefreshingMinus] = useState(false);
-  const [isRefreshingPlus, setIsRefreshingPlus] = useState(false);
+  // const [isRefreshingMinus, setIsRefreshingMinus] = useState(false);
+  // const [isRefreshingPlus, setIsRefreshingPlus] = useState(false);
 
-  const handleRefreshMinus = async () => {
-    setIsRefreshingMinus(true);
-    // Simulate API call or data refresh
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsRefreshingMinus(false);
-  };
+  // const handleRefreshMinus = async () => {
+  //   setIsRefreshingMinus(true);
+  //   // Simulate API call or data refresh
+  //   await new Promise((resolve) => setTimeout(resolve, 1000));
+  //   setIsRefreshingMinus(false);
+  // };
 
-  const handleRefreshPlus = async () => {
-    setIsRefreshingPlus(true);
-    // Simulate API call or data refresh
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsRefreshingPlus(false);
-  };
+  // const handleRefreshPlus = async () => {
+  //   setIsRefreshingPlus(true);
+  //   // Simulate API call or data refresh
+  //   await new Promise((resolve) => setTimeout(resolve, 1000));
+  //   setIsRefreshingPlus(false);
+  // };
 
   return (
-    <Card className="grid grid-cols-6 bg-card p-6 rounded-md">
+    <Card className="grid grid-cols-4 bg-card p-6 rounded-md">
       <div className="text-center border-r-4 border-background">
         <h1 className="text-lg">Pair</h1>
         <p className="text-2xl font-medium text-[#F3EE8D]">
@@ -52,7 +52,7 @@ export default function Amounts() {
           {selectedData?.avg_24h_price?.toLocaleString() ?? "-"}
         </p>
       </div>
-      <div className="text-center border-r-4 border-background">
+      {/* <div className="text-center border-r-4 border-background">
         <div className="flex items-center justify-center gap-2">
           <h1 className="text-lg">Depth</h1>
           <span
@@ -123,7 +123,7 @@ export default function Amounts() {
         <p className="text-2xl font-medium text-[#F3EE8D]">
           ${selectedData?.depth_plus_2?.toFixed(2) ?? "-"}
         </p>
-      </div>
+      </div> */}
       <div className="text-center">
         <h1 className="text-lg">Est. Daily Fee</h1>
         <p className="text-2xl font-medium text-[#F3EE8D]">
