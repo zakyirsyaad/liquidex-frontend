@@ -58,21 +58,23 @@ export default function Amounts() {
           ${selectedData?.pair ?? "-"}
         </p>
       </div>
-      <div className="text-center border-r-4 border-background">
+
+      {/* <div className="text-center border-r-4 border-background">
         <h1 className="text-lg">Vol</h1>
         <p className="text-2xl font-medium text-[#F3EE8D]">
           ${selectedData?.generated_volume?.toLocaleString() ?? "-"}
         </p>
-      </div>
-      <div className="text-center border-r-4 border-background">
+      </div> */}
+      {/* <div className="text-center border-r-4 border-background">
         <h1 className="text-lg">Avg. Price 24H</h1>
         <p className="text-2xl font-medium text-[#F3EE8D]">
           {selectedData?.avg_24h_price?.toLocaleString() ?? "-"}
         </p>
-      </div>
+      </div> */}
+
       <div className="text-center border-r-4 border-background">
         <div className="flex items-center justify-center gap-2">
-          <h1 className="text-lg">MM Depth Buy</h1>
+          <h1 className="text-lg">MM Depth Plus +2%</h1>
           <span
             className={`text-sm ${
               (percentageChanges?.mm_depth_plus_2_change || 0) > 0
@@ -109,9 +111,10 @@ export default function Amounts() {
           ${selectedData?.mm_depth_plus_2?.toFixed(2) ?? "-"}
         </p>
       </div>
+
       <div className="text-center border-r-4 border-background">
         <div className="flex items-center justify-center gap-2">
-          <h1 className="text-lg">MM Depth Sell</h1>
+          <h1 className="text-lg">MM Depth Minus -2%</h1>
           <span
             className={`text-sm ${
               (percentageChanges?.mm_depth_minus_2_change || 0) > 0
@@ -148,9 +151,10 @@ export default function Amounts() {
           ${selectedData?.mm_depth_minus_2?.toFixed(2) ?? "-"}
         </p>
       </div>
+
       <div className="text-center border-r-4 border-background">
         <div className="flex items-center justify-center gap-2">
-          <h1 className="text-lg">Organic Depth Buy</h1>
+          <h1 className="text-lg">Organic Depth +2%</h1>
           <span
             className={`text-sm ${
               (percentageChanges?.organic_depth_plus_2_change || 0) > 0
@@ -187,9 +191,10 @@ export default function Amounts() {
           ${selectedData?.organic_depth_plus_2?.toFixed(2) ?? "-"}
         </p>
       </div>
+
       <div className="text-center border-r-4 border-background">
         <div className="flex items-center justify-center gap-2">
-          <h1 className="text-lg">Organic Depth Sell</h1>
+          <h1 className="text-lg">Organic Depth -2%</h1>
           <span
             className={`text-sm ${
               (percentageChanges?.organic_depth_minus_2_change || 0) > 0

@@ -42,64 +42,48 @@ export default function Depths() {
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
 
-  // Get depth changes from metrics
-  const { percentageChanges } = useMetrics(
+  // Get depth changes and metrics series from Supabase
+  const { metrics, percentageChanges } = useMetrics(
     selectedData?.exchange || "",
     selectedData?.pair || ""
   );
 
   // Transform depth data for chart
   const chartData = React.useMemo(() => {
-    if (
-      !selectedData?.mm_depth_plus_2_24h_statistic ||
-      !selectedData?.mm_depth_minus_2_24h_statistic ||
-      !selectedData?.organic_depth_plus_2_24h_statistic ||
-      !selectedData?.organic_depth_minus_2_24h_statistic
-    ) {
+    if (!metrics?.length) {
       return [];
     }
 
-    // Use actual data from depth statistics
-    const timeLabels: string[] = [];
-    const now = new Date();
-    const length = Math.max(
-      selectedData.mm_depth_plus_2_24h_statistic.length,
-      selectedData.mm_depth_minus_2_24h_statistic.length,
-      selectedData.organic_depth_plus_2_24h_statistic.length,
-      selectedData.organic_depth_minus_2_24h_statistic.length
-    );
-
-    for (let i = 0; i < length; i++) {
-      const time = new Date(
-        now.getTime() - ((length - 1 - i) * (24 * 60 * 60 * 1000)) / length
-      );
+    return metrics.map((m) => {
+      const t = new Date(String((m as { created_at?: string }).created_at));
       const timeLabel =
-        time.toLocaleDateString("en-GB", {
+        t.toLocaleDateString("en-GB", {
           day: "numeric",
           month: "short",
           year: "numeric",
         }) +
         ": " +
-        time.toLocaleTimeString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-      timeLabels.push(timeLabel);
-    }
+        t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 
-    return timeLabels.map((time, index) => ({
-      time,
-      mm_depth_minus_2: selectedData.mm_depth_minus_2_24h_statistic[index] || 0, // MM Sell depth (positive, above zero)
-      mm_depth_plus_2: -(
-        selectedData.mm_depth_plus_2_24h_statistic[index] || 0
-      ), // MM Buy depth (negative, below zero)
-      organic_depth_sell:
-        selectedData.organic_depth_minus_2_24h_statistic[index] || 0, // Organic Sell depth (positive, above zero)
-      organic_depth_buy: -(
-        selectedData.organic_depth_minus_2_24h_statistic[index] || 0
-      ), // Organic Buy depth (negative, below zero)
-    }));
-  }, [selectedData]);
+      return {
+        time: timeLabel,
+        mm_depth_minus_2:
+          Number((m as { mm_depth_minus_2?: number }).mm_depth_minus_2) || 0,
+        mm_depth_plus_2: -(
+          Number((m as { mm_depth_plus_2?: number }).mm_depth_plus_2) || 0
+        ),
+        organic_depth_minus_2:
+          Number(
+            (m as { organic_depth_minus_2?: number }).organic_depth_minus_2
+          ) || 0,
+        organic_depth_plus_2: -(
+          Number(
+            (m as { organic_depth_plus_2?: number }).organic_depth_plus_2
+          ) || 0
+        ),
+      };
+    });
+  }, [metrics]);
 
   return (
     <ResponsiveChart title="Depths">
@@ -206,13 +190,7 @@ export default function Depths() {
             labelStyle={{ color: "#9CA3AF" }}
             formatter={(value: number, name: string) => [
               `${Math.abs(value).toLocaleString()}`,
-              name === "mm_depth_sell"
-                ? "MM Sell (Token)"
-                : name === "mm_depth_buy"
-                ? "MM Buy ($)"
-                : name === "organic_depth_sell"
-                ? "Organic Sell (Token)"
-                : "Organic Buy ($)",
+              name,
             ]}
           />
           <Legend
@@ -222,7 +200,7 @@ export default function Depths() {
             }}
           />
           <Area
-            dataKey="mm_depth_sell"
+            dataKey="mm_depth_minus_2"
             type="monotone"
             fill="url(#fillMMSellDepth)"
             stroke="#EF4444"
@@ -230,7 +208,7 @@ export default function Depths() {
             name="MM Sell (Token)"
           />
           <Area
-            dataKey="mm_depth_buy"
+            dataKey="mm_depth_plus_2"
             type="monotone"
             fill="url(#fillMMBuyDepth)"
             stroke="#10B981"
@@ -238,7 +216,7 @@ export default function Depths() {
             name="MM Buy ($)"
           />
           <Area
-            dataKey="organic_depth_sell"
+            dataKey="organic_depth_minus_2"
             type="monotone"
             fill="url(#fillOrganicSellDepth)"
             stroke="#F59E0B"
@@ -246,7 +224,7 @@ export default function Depths() {
             name="Organic Sell (Token)"
           />
           <Area
-            dataKey="organic_depth_buy"
+            dataKey="organic_depth_plus_2"
             type="monotone"
             fill="url(#fillOrganicBuyDepth)"
             stroke="#3B82F6"
