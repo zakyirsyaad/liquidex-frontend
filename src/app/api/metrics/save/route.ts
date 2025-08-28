@@ -9,8 +9,10 @@ export async function POST(request: NextRequest) {
       pair,
       current_price,
       last_vol_24h,
-      depth_plus,
-      depth_minus,
+      mm_depth_buy,
+      mm_depth_sell,
+      organic_depth_buy,
+      organic_depth_sell,
     } = body;
 
     const { data, error } = await supabase
@@ -21,8 +23,10 @@ export async function POST(request: NextRequest) {
           pair,
           current_price,
           last_vol_24h,
-          depth_plus,
-          depth_minus,
+          mm_depth_buy,
+          mm_depth_sell,
+          organic_depth_buy,
+          organic_depth_sell,
         },
       ])
       .select();

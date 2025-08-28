@@ -15,16 +15,24 @@ import { useExchangeStore } from "@/store/exchangeStore";
 import { useMetrics } from "@/hook/useMetrics";
 import { ChartContainer } from "@/components/ui/chart";
 
-export const description = "Depth Plus and Minus 24h Chart";
+export const description = "MM Depth and Organic Depth 24h Chart";
 
 const chartConfig = {
-  sell_depth: {
-    label: "2% Sell (Token)",
+  mm_depth_sell: {
+    label: "MM Depth Sell (Token)",
     color: "#EF4444",
   },
-  buy_depth: {
-    label: "2% Buy ($)",
+  mm_depth_buy: {
+    label: "MM Depth Buy ($)",
     color: "#10B981",
+  },
+  organic_depth_sell: {
+    label: "Organic Depth Sell (Token)",
+    color: "#F59E0B",
+  },
+  organic_depth_buy: {
+    label: "Organic Depth Buy ($)",
+    color: "#3B82F6",
   },
 };
 
@@ -43,8 +51,10 @@ export default function Depths() {
   // Transform depth data for chart
   const chartData = React.useMemo(() => {
     if (
-      !selectedData?.depth_plus_2_24h_statistic ||
-      !selectedData?.depth_minus_2_24h_statistic
+      !selectedData?.mm_depth_buy_24h_statistic ||
+      !selectedData?.mm_depth_sell_24h_statistic ||
+      !selectedData?.organic_depth_buy_24h_statistic ||
+      !selectedData?.organic_depth_sell_24h_statistic
     ) {
       return [];
     }
@@ -53,8 +63,10 @@ export default function Depths() {
     const timeLabels: string[] = [];
     const now = new Date();
     const length = Math.max(
-      selectedData.depth_plus_2_24h_statistic.length,
-      selectedData.depth_minus_2_24h_statistic.length
+      selectedData.mm_depth_buy_24h_statistic.length,
+      selectedData.mm_depth_sell_24h_statistic.length,
+      selectedData.organic_depth_buy_24h_statistic.length,
+      selectedData.organic_depth_sell_24h_statistic.length
     );
 
     for (let i = 0; i < length; i++) {
@@ -77,30 +89,53 @@ export default function Depths() {
 
     return timeLabels.map((time, index) => ({
       time,
-      sell_depth: selectedData.depth_minus_2_24h_statistic[index] || 0, // Sell depth (positive, above zero)
-      buy_depth: -(selectedData.depth_plus_2_24h_statistic[index] || 0), // Buy depth (negative, below zero)
+      mm_depth_sell: selectedData.mm_depth_sell_24h_statistic[index] || 0, // MM Sell depth (positive, above zero)
+      mm_depth_buy: -(selectedData.mm_depth_buy_24h_statistic[index] || 0), // MM Buy depth (negative, below zero)
+      organic_depth_sell:
+        selectedData.organic_depth_sell_24h_statistic[index] || 0, // Organic Sell depth (positive, above zero)
+      organic_depth_buy: -(
+        selectedData.organic_depth_buy_24h_statistic[index] || 0
+      ), // Organic Buy depth (negative, below zero)
     }));
   }, [selectedData]);
 
   return (
     <ResponsiveChart title="Depths">
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4 mb-4 flex-wrap">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
           <span className="text-gray-300 text-sm">
-            {percentageChanges?.depth_minus_change
-              ? `${percentageChanges.depth_minus_change.toFixed(2)}%`
+            {percentageChanges?.mm_depth_sell_change
+              ? `${percentageChanges.mm_depth_sell_change.toFixed(2)}%`
               : "0%"}{" "}
-            Sell (Token)
+            MM Sell (Token)
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-green-500 rounded-sm"></div>
           <span className="text-gray-300 text-sm">
-            {percentageChanges?.depth_plus_change
-              ? `${percentageChanges.depth_plus_change.toFixed(2)}%`
+            {percentageChanges?.mm_depth_buy_change
+              ? `${percentageChanges.mm_depth_buy_change.toFixed(2)}%`
               : "0%"}{" "}
-            Buy ($)
+            MM Buy ($)
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-yellow-500 rounded-sm"></div>
+          <span className="text-gray-300 text-sm">
+            {percentageChanges?.organic_depth_sell_change
+              ? `${percentageChanges.organic_depth_sell_change.toFixed(2)}%`
+              : "0%"}{" "}
+            Organic Sell (Token)
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-blue-500 rounded-sm"></div>
+          <span className="text-gray-300 text-sm">
+            {percentageChanges?.organic_depth_buy_change
+              ? `${percentageChanges.organic_depth_buy_change.toFixed(2)}%`
+              : "0%"}{" "}
+            Organic Buy ($)
           </span>
         </div>
       </div>
@@ -110,13 +145,33 @@ export default function Depths() {
       >
         <AreaChart data={chartData}>
           <defs>
-            <linearGradient id="fillSellDepth" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="fillMMSellDepth" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#EF4444" stopOpacity={0.8} />
               <stop offset="95%" stopColor="#EF4444" stopOpacity={0.1} />
             </linearGradient>
-            <linearGradient id="fillBuyDepth" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="fillMMBuyDepth" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
               <stop offset="95%" stopColor="#10B981" stopOpacity={0.1} />
+            </linearGradient>
+            <linearGradient
+              id="fillOrganicSellDepth"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+            </linearGradient>
+            <linearGradient
+              id="fillOrganicBuyDepth"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -149,7 +204,13 @@ export default function Depths() {
             labelStyle={{ color: "#9CA3AF" }}
             formatter={(value: number, name: string) => [
               `${Math.abs(value).toLocaleString()}`,
-              name === "sell_depth" ? "2% Sell (Token)" : "2% Buy ($)",
+              name === "mm_depth_sell"
+                ? "MM Sell (Token)"
+                : name === "mm_depth_buy"
+                ? "MM Buy ($)"
+                : name === "organic_depth_sell"
+                ? "Organic Sell (Token)"
+                : "Organic Buy ($)",
             ]}
           />
           <Legend
@@ -159,20 +220,36 @@ export default function Depths() {
             }}
           />
           <Area
-            dataKey="sell_depth"
+            dataKey="mm_depth_sell"
             type="monotone"
-            fill="url(#fillSellDepth)"
+            fill="url(#fillMMSellDepth)"
             stroke="#EF4444"
             strokeWidth={2}
-            name="Sell (Token)"
+            name="MM Sell (Token)"
           />
           <Area
-            dataKey="buy_depth"
+            dataKey="mm_depth_buy"
             type="monotone"
-            fill="url(#fillBuyDepth)"
+            fill="url(#fillMMBuyDepth)"
             stroke="#10B981"
             strokeWidth={2}
-            name="Buy ($)"
+            name="MM Buy ($)"
+          />
+          <Area
+            dataKey="organic_depth_sell"
+            type="monotone"
+            fill="url(#fillOrganicSellDepth)"
+            stroke="#F59E0B"
+            strokeWidth={2}
+            name="Organic Sell (Token)"
+          />
+          <Area
+            dataKey="organic_depth_buy"
+            type="monotone"
+            fill="url(#fillOrganicBuyDepth)"
+            stroke="#3B82F6"
+            strokeWidth={2}
+            name="Organic Buy ($)"
           />
         </AreaChart>
       </ChartContainer>

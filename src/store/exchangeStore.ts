@@ -9,16 +9,20 @@ export type ExchangeData = {
   balance_token: number;
   deployed_buy: number;
   deployed_sell: number;
-  estimated_fee: number;
+  estimated_fee: number; // renamed from estimated_fee
   internal_pricing: number;
-  depth_plus_2: number;
-  depth_minus_2: number;
+  mm_depth_plus_2: number; // MM Depth (buy)
+  mm_depth_minus_2: number; // MM Depth (sell)
+  organic_depth_plus_2: number; // Organic Depth (buy)
+  organic_depth_minus_2: number; // Organic Depth (sell)
   spread: number;
   avg_24h_price: number;
   volume_24h_statistic: string[];
   spread_24h_statistic: number[];
-  depth_minus_2_24h_statistic: number[];
-  depth_plus_2_24h_statistic: number[];
+  mm_depth_minus_2_24h_statistic: number[]; // updated from depth_minus_2_24h_statistic
+  mm_depth_plus_2_24h_statistic: number[]; // updated from depth_plus_2_24h_statistic
+  organic_depth_buy_24h_statistic: number[]; // new field
+  organic_depth_sell_24h_statistic: number[]; // new field
   usdt_balance_24h_statistic: number[];
   token_balance_24h_statistic: number[];
 };

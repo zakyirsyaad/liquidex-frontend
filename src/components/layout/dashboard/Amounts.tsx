@@ -1,7 +1,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { useExchangeStore } from "@/store/exchangeStore";
-// import { useMetrics } from "@/hook/useMetrics";
+import { useMetrics } from "@/hook/useMetrics";
 
 export default function Amounts() {
   const getCurrentData = useExchangeStore((s) => s.getCurrentData);
@@ -10,30 +10,48 @@ export default function Amounts() {
   const selectedData = data.find((d) => d.exchange === selected);
 
   // Get depth changes from metrics
-  // const { percentageChanges } = useMetrics(
-  //   selectedData?.exchange || "",
-  //   selectedData?.pair || ""
-  // );
+  const { percentageChanges } = useMetrics(
+    selectedData?.exchange || "",
+    selectedData?.pair || ""
+  );
 
-  // const [isRefreshingMinus, setIsRefreshingMinus] = useState(false);
-  // const [isRefreshingPlus, setIsRefreshingPlus] = useState(false);
+  const [isRefreshingMMBuy, setIsRefreshingMMBuy] = React.useState(false);
+  const [isRefreshingMMSell, setIsRefreshingMMSell] = React.useState(false);
+  const [isRefreshingOrganicBuy, setIsRefreshingOrganicBuy] =
+    React.useState(false);
+  const [isRefreshingOrganicSell, setIsRefreshingOrganicSell] =
+    React.useState(false);
 
-  // const handleRefreshMinus = async () => {
-  //   setIsRefreshingMinus(true);
-  //   // Simulate API call or data refresh
-  //   await new Promise((resolve) => setTimeout(resolve, 1000));
-  //   setIsRefreshingMinus(false);
-  // };
+  const handleRefreshMMBuy = async () => {
+    setIsRefreshingMMBuy(true);
+    // Simulate API call or data refresh
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsRefreshingMMBuy(false);
+  };
 
-  // const handleRefreshPlus = async () => {
-  //   setIsRefreshingPlus(true);
-  //   // Simulate API call or data refresh
-  //   await new Promise((resolve) => setTimeout(resolve, 1000));
-  //   setIsRefreshingPlus(false);
-  // };
+  const handleRefreshMMSell = async () => {
+    setIsRefreshingMMSell(true);
+    // Simulate API call or data refresh
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsRefreshingMMSell(false);
+  };
+
+  const handleRefreshOrganicBuy = async () => {
+    setIsRefreshingOrganicBuy(true);
+    // Simulate API call or data refresh
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsRefreshingOrganicBuy(false);
+  };
+
+  const handleRefreshOrganicSell = async () => {
+    setIsRefreshingOrganicSell(true);
+    // Simulate API call or data refresh
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsRefreshingOrganicSell(false);
+  };
 
   return (
-    <Card className="grid grid-cols-4 bg-card p-6 rounded-md">
+    <Card className="grid grid-cols-6 bg-card p-6 rounded-md">
       <div className="text-center border-r-4 border-background">
         <h1 className="text-lg">Pair</h1>
         <p className="text-2xl font-medium text-[#F3EE8D]">
@@ -52,78 +70,157 @@ export default function Amounts() {
           {selectedData?.avg_24h_price?.toLocaleString() ?? "-"}
         </p>
       </div>
-      {/* <div className="text-center border-r-4 border-background">
+      <div className="text-center border-r-4 border-background">
         <div className="flex items-center justify-center gap-2">
-          <h1 className="text-lg">Depth</h1>
+          <h1 className="text-lg">MM Depth Buy</h1>
           <span
             className={`text-sm ${
-              (percentageChanges?.depth_minus_change || 0) > 0
+              (percentageChanges?.mm_depth_buy_change || 0) > 0
                 ? "text-green-500"
-                : (percentageChanges?.depth_minus_change || 0) < 0
+                : (percentageChanges?.mm_depth_buy_change || 0) < 0
                 ? "text-red-500"
                 : "text-gray-400"
             }`}
           >
             (
-            {(percentageChanges?.depth_minus_change || 0) > 0
+            {(percentageChanges?.mm_depth_buy_change || 0) > 0
               ? "+"
-              : (percentageChanges?.depth_minus_change || 0) < 0
+              : (percentageChanges?.mm_depth_buy_change || 0) < 0
               ? "-"
               : ""}
-            {Math.abs(percentageChanges?.depth_minus_change || 0).toFixed(2)}%)
+            {Math.abs(percentageChanges?.mm_depth_buy_change || 0).toFixed(2)}%)
           </span>
           <button
-            onClick={handleRefreshMinus}
-            disabled={isRefreshingMinus}
+            onClick={handleRefreshMMBuy}
+            disabled={isRefreshingMMBuy}
             className="hover:opacity-70 transition-opacity"
           >
             <img
               src="/icons/refresh.svg"
-              className={`${isRefreshingMinus ? "animate-spin" : ""}`}
+              className={`${isRefreshingMMBuy ? "animate-spin" : ""}`}
               alt="Refresh"
             />
           </button>
         </div>
         <p className="text-2xl font-medium text-[#F3EE8D]">
-          ${selectedData?.depth_minus_2?.toFixed(2) ?? "-"}
+          ${selectedData?.mm_depth_buy?.toFixed(2) ?? "-"}
         </p>
       </div>
       <div className="text-center border-r-4 border-background">
         <div className="flex items-center justify-center gap-2">
-          <h1 className="text-lg">Depth</h1>
+          <h1 className="text-lg">MM Depth Sell</h1>
           <span
             className={`text-sm ${
-              (percentageChanges?.depth_plus_change || 0) > 0
+              (percentageChanges?.mm_depth_sell_change || 0) > 0
                 ? "text-green-500"
-                : (percentageChanges?.depth_plus_change || 0) < 0
+                : (percentageChanges?.mm_depth_sell_change || 0) < 0
                 ? "text-red-500"
                 : "text-gray-400"
             }`}
           >
             (
-            {(percentageChanges?.depth_plus_change || 0) > 0
+            {(percentageChanges?.mm_depth_sell_change || 0) > 0
               ? "+"
-              : (percentageChanges?.depth_plus_change || 0) < 0
+              : (percentageChanges?.mm_depth_sell_change || 0) < 0
               ? "-"
               : ""}
-            {Math.abs(percentageChanges?.depth_plus_change || 0).toFixed(2)}%)
+            {Math.abs(percentageChanges?.mm_depth_sell_change || 0).toFixed(2)}
+            %)
           </span>
           <button
-            onClick={handleRefreshPlus}
-            disabled={isRefreshingPlus}
+            onClick={handleRefreshMMSell}
+            disabled={isRefreshingMMSell}
             className="hover:opacity-70 transition-opacity"
           >
             <img
               src="/icons/refresh.svg"
-              className={`${isRefreshingPlus ? "animate-spin" : ""}`}
+              className={`${isRefreshingMMSell ? "animate-spin" : ""}`}
               alt="Refresh"
             />
           </button>
         </div>
         <p className="text-2xl font-medium text-[#F3EE8D]">
-          ${selectedData?.depth_plus_2?.toFixed(2) ?? "-"}
+          ${selectedData?.mm_depth_sell?.toFixed(2) ?? "-"}
         </p>
-      </div> */}
+      </div>
+      <div className="text-center border-r-4 border-background">
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-lg">Organic Depth Buy</h1>
+          <span
+            className={`text-sm ${
+              (percentageChanges?.organic_depth_buy_change || 0) > 0
+                ? "text-green-500"
+                : (percentageChanges?.organic_depth_buy_change || 0) < 0
+                ? "text-red-500"
+                : "text-gray-400"
+            }`}
+          >
+            (
+            {(percentageChanges?.organic_depth_buy_change || 0) > 0
+              ? "+"
+              : (percentageChanges?.organic_depth_buy_change || 0) < 0
+              ? "-"
+              : ""}
+            {Math.abs(percentageChanges?.organic_depth_buy_change || 0).toFixed(
+              2
+            )}
+            %)
+          </span>
+          <button
+            onClick={handleRefreshOrganicBuy}
+            disabled={isRefreshingOrganicBuy}
+            className="hover:opacity-70 transition-opacity"
+          >
+            <img
+              src="/icons/refresh.svg"
+              className={`${isRefreshingOrganicBuy ? "animate-spin" : ""}`}
+              alt="Refresh"
+            />
+          </button>
+        </div>
+        <p className="text-2xl font-medium text-[#F3EE8D]">
+          ${selectedData?.organic_depth_buy?.toFixed(2) ?? "-"}
+        </p>
+      </div>
+      <div className="text-center border-r-4 border-background">
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-lg">Organic Depth Sell</h1>
+          <span
+            className={`text-sm ${
+              (percentageChanges?.organic_depth_sell_change || 0) > 0
+                ? "text-green-500"
+                : (percentageChanges?.organic_depth_sell_change || 0) < 0
+                ? "text-red-500"
+                : "text-gray-400"
+            }`}
+          >
+            (
+            {(percentageChanges?.organic_depth_sell_change || 0) > 0
+              ? "+"
+              : (percentageChanges?.organic_depth_sell_change || 0) < 0
+              ? "-"
+              : ""}
+            {Math.abs(
+              percentageChanges?.organic_depth_sell_change || 0
+            ).toFixed(2)}
+            %)
+          </span>
+          <button
+            onClick={handleRefreshOrganicSell}
+            disabled={isRefreshingOrganicSell}
+            className="hover:opacity-70 transition-opacity"
+          >
+            <img
+              src="/icons/refresh.svg"
+              className={`${isRefreshingOrganicSell ? "animate-spin" : ""}`}
+              alt="Refresh"
+            />
+          </button>
+        </div>
+        <p className="text-2xl font-medium text-[#F3EE8D]">
+          ${selectedData?.organic_depth_sell?.toFixed(2) ?? "-"}
+        </p>
+      </div>
       <div className="text-center">
         <h1 className="text-lg">Est. Daily Fee</h1>
         <p className="text-2xl font-medium text-[#F3EE8D]">
