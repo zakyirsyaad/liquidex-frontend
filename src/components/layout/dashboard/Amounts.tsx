@@ -75,20 +75,23 @@ export default function Amounts() {
           <h1 className="text-lg">MM Depth Buy</h1>
           <span
             className={`text-sm ${
-              (percentageChanges?.mm_depth_buy_change || 0) > 0
+              (percentageChanges?.mm_depth_plus_2_change || 0) > 0
                 ? "text-green-500"
-                : (percentageChanges?.mm_depth_buy_change || 0) < 0
+                : (percentageChanges?.mm_depth_plus_2_change || 0) < 0
                 ? "text-red-500"
                 : "text-gray-400"
             }`}
           >
             (
-            {(percentageChanges?.mm_depth_buy_change || 0) > 0
+            {(percentageChanges?.mm_depth_plus_2_change || 0) > 0
               ? "+"
-              : (percentageChanges?.mm_depth_buy_change || 0) < 0
+              : (percentageChanges?.mm_depth_plus_2_change || 0) < 0
               ? "-"
               : ""}
-            {Math.abs(percentageChanges?.mm_depth_buy_change || 0).toFixed(2)}%)
+            {Math.abs(percentageChanges?.mm_depth_plus_2_change || 0).toFixed(
+              2
+            )}
+            %)
           </span>
           <button
             onClick={handleRefreshMMBuy}
@@ -103,7 +106,7 @@ export default function Amounts() {
           </button>
         </div>
         <p className="text-2xl font-medium text-[#F3EE8D]">
-          ${selectedData?.mm_depth_buy?.toFixed(2) ?? "-"}
+          ${selectedData?.mm_depth_plus_2?.toFixed(2) ?? "-"}
         </p>
       </div>
       <div className="text-center border-r-4 border-background">
@@ -111,20 +114,22 @@ export default function Amounts() {
           <h1 className="text-lg">MM Depth Sell</h1>
           <span
             className={`text-sm ${
-              (percentageChanges?.mm_depth_sell_change || 0) > 0
+              (percentageChanges?.mm_depth_minus_2_change || 0) > 0
                 ? "text-green-500"
-                : (percentageChanges?.mm_depth_sell_change || 0) < 0
+                : (percentageChanges?.mm_depth_minus_2_change || 0) < 0
                 ? "text-red-500"
                 : "text-gray-400"
             }`}
           >
             (
-            {(percentageChanges?.mm_depth_sell_change || 0) > 0
+            {(percentageChanges?.mm_depth_minus_2_change || 0) > 0
               ? "+"
-              : (percentageChanges?.mm_depth_sell_change || 0) < 0
+              : (percentageChanges?.mm_depth_minus_2_change || 0) < 0
               ? "-"
               : ""}
-            {Math.abs(percentageChanges?.mm_depth_sell_change || 0).toFixed(2)}
+            {Math.abs(percentageChanges?.mm_depth_minus_2_change || 0).toFixed(
+              2
+            )}
             %)
           </span>
           <button
@@ -140,7 +145,7 @@ export default function Amounts() {
           </button>
         </div>
         <p className="text-2xl font-medium text-[#F3EE8D]">
-          ${selectedData?.mm_depth_sell?.toFixed(2) ?? "-"}
+          ${selectedData?.mm_depth_minus_2?.toFixed(2) ?? "-"}
         </p>
       </div>
       <div className="text-center border-r-4 border-background">
@@ -148,22 +153,22 @@ export default function Amounts() {
           <h1 className="text-lg">Organic Depth Buy</h1>
           <span
             className={`text-sm ${
-              (percentageChanges?.organic_depth_buy_change || 0) > 0
+              (percentageChanges?.organic_depth_plus_2_change || 0) > 0
                 ? "text-green-500"
-                : (percentageChanges?.organic_depth_buy_change || 0) < 0
+                : (percentageChanges?.organic_depth_plus_2_change || 0) < 0
                 ? "text-red-500"
                 : "text-gray-400"
             }`}
           >
             (
-            {(percentageChanges?.organic_depth_buy_change || 0) > 0
+            {(percentageChanges?.organic_depth_plus_2_change || 0) > 0
               ? "+"
-              : (percentageChanges?.organic_depth_buy_change || 0) < 0
+              : (percentageChanges?.organic_depth_plus_2_change || 0) < 0
               ? "-"
               : ""}
-            {Math.abs(percentageChanges?.organic_depth_buy_change || 0).toFixed(
-              2
-            )}
+            {Math.abs(
+              percentageChanges?.organic_depth_plus_2_change || 0
+            ).toFixed(2)}
             %)
           </span>
           <button
@@ -179,7 +184,7 @@ export default function Amounts() {
           </button>
         </div>
         <p className="text-2xl font-medium text-[#F3EE8D]">
-          ${selectedData?.organic_depth_buy?.toFixed(2) ?? "-"}
+          ${selectedData?.organic_depth_plus_2?.toFixed(2) ?? "-"}
         </p>
       </div>
       <div className="text-center border-r-4 border-background">
@@ -187,21 +192,21 @@ export default function Amounts() {
           <h1 className="text-lg">Organic Depth Sell</h1>
           <span
             className={`text-sm ${
-              (percentageChanges?.organic_depth_sell_change || 0) > 0
+              (percentageChanges?.organic_depth_minus_2_change || 0) > 0
                 ? "text-green-500"
-                : (percentageChanges?.organic_depth_sell_change || 0) < 0
+                : (percentageChanges?.organic_depth_minus_2_change || 0) < 0
                 ? "text-red-500"
                 : "text-gray-400"
             }`}
           >
             (
-            {(percentageChanges?.organic_depth_sell_change || 0) > 0
+            {(percentageChanges?.organic_depth_minus_2_change || 0) > 0
               ? "+"
-              : (percentageChanges?.organic_depth_sell_change || 0) < 0
+              : (percentageChanges?.organic_depth_minus_2_change || 0) < 0
               ? "-"
               : ""}
             {Math.abs(
-              percentageChanges?.organic_depth_sell_change || 0
+              percentageChanges?.organic_depth_minus_2_change || 0
             ).toFixed(2)}
             %)
           </span>
@@ -218,7 +223,7 @@ export default function Amounts() {
           </button>
         </div>
         <p className="text-2xl font-medium text-[#F3EE8D]">
-          ${selectedData?.organic_depth_sell?.toFixed(2) ?? "-"}
+          ${selectedData?.organic_depth_minus_2?.toFixed(2) ?? "-"}
         </p>
       </div>
       <div className="text-center">

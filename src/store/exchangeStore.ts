@@ -21,8 +21,8 @@ export type ExchangeData = {
   spread_24h_statistic: number[];
   mm_depth_minus_2_24h_statistic: number[]; // updated from depth_minus_2_24h_statistic
   mm_depth_plus_2_24h_statistic: number[]; // updated from depth_plus_2_24h_statistic
-  organic_depth_buy_24h_statistic: number[]; // new field
-  organic_depth_sell_24h_statistic: number[]; // new field
+  organic_depth_plus_2_24h_statistic: number[]; // new field
+  organic_depth_minus_2_24h_statistic: number[]; // new field
   usdt_balance_24h_statistic: number[];
   token_balance_24h_statistic: number[];
 };

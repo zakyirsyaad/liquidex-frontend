@@ -8,10 +8,10 @@ export async function saveMetricsToSupabase(exchangeData: ExchangeData[]) {
       pair: exchange.pair,
       current_price: exchange.internal_pricing,
       last_vol_24h: exchange.generated_volume,
-      mm_depth_buy: exchange.mm_depth_plus_2,
-      mm_depth_sell: exchange.mm_depth_minus_2,
-      organic_depth_buy: exchange.organic_depth_plus_2,
-      organic_depth_sell: exchange.organic_depth_minus_2,
+      mm_depth_plus_2: exchange.mm_depth_plus_2,
+      mm_depth_minus_2: exchange.mm_depth_minus_2,
+      organic_depth_plus_2: exchange.organic_depth_plus_2,
+      organic_depth_minus_2: exchange.organic_depth_minus_2,
     }));
 
     const { data, error } = await supabase
@@ -40,10 +40,10 @@ export async function saveSingleMetric(exchange: ExchangeData) {
           pair: exchange.pair,
           current_price: exchange.internal_pricing,
           last_vol_24h: exchange.generated_volume,
-          mm_depth_buy: exchange.mm_depth_plus_2,
-          mm_depth_sell: exchange.mm_depth_minus_2,
-          organic_depth_buy: exchange.organic_depth_plus_2,
-          organic_depth_sell: exchange.organic_depth_minus_2,
+          mm_depth_plus_2: exchange.mm_depth_plus_2,
+          mm_depth_minus_2: exchange.mm_depth_minus_2,
+          organic_depth_plus_2: exchange.organic_depth_plus_2,
+          organic_depth_minus_2: exchange.organic_depth_minus_2,
         },
       ])
       .select();

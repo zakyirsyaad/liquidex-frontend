@@ -18,20 +18,20 @@ import { ChartContainer } from "@/components/ui/chart";
 export const description = "MM Depth and Organic Depth 24h Chart";
 
 const chartConfig = {
-  mm_depth_sell: {
-    label: "MM Depth Sell (Token)",
+  mm_depth_minus_2: {
+    label: "MM Depth Minus (Token)",
     color: "#EF4444",
   },
-  mm_depth_buy: {
-    label: "MM Depth Buy ($)",
+  mm_depth_plus_2: {
+    label: "MM Depth Plus ($)",
     color: "#10B981",
   },
-  organic_depth_sell: {
-    label: "Organic Depth Sell (Token)",
+  organic_depth_minus_2: {
+    label: "Organic Depth Minus (Token)",
     color: "#F59E0B",
   },
-  organic_depth_buy: {
-    label: "Organic Depth Buy ($)",
+  organic_depth_plus_2: {
+    label: "Organic Depth Plus ($)",
     color: "#3B82F6",
   },
 };
@@ -51,10 +51,10 @@ export default function Depths() {
   // Transform depth data for chart
   const chartData = React.useMemo(() => {
     if (
-      !selectedData?.mm_depth_buy_24h_statistic ||
-      !selectedData?.mm_depth_sell_24h_statistic ||
-      !selectedData?.organic_depth_buy_24h_statistic ||
-      !selectedData?.organic_depth_sell_24h_statistic
+      !selectedData?.mm_depth_plus_2_24h_statistic ||
+      !selectedData?.mm_depth_minus_2_24h_statistic ||
+      !selectedData?.organic_depth_plus_2_24h_statistic ||
+      !selectedData?.organic_depth_minus_2_24h_statistic
     ) {
       return [];
     }
@@ -63,10 +63,10 @@ export default function Depths() {
     const timeLabels: string[] = [];
     const now = new Date();
     const length = Math.max(
-      selectedData.mm_depth_buy_24h_statistic.length,
-      selectedData.mm_depth_sell_24h_statistic.length,
-      selectedData.organic_depth_buy_24h_statistic.length,
-      selectedData.organic_depth_sell_24h_statistic.length
+      selectedData.mm_depth_plus_2_24h_statistic.length,
+      selectedData.mm_depth_minus_2_24h_statistic.length,
+      selectedData.organic_depth_plus_2_24h_statistic.length,
+      selectedData.organic_depth_minus_2_24h_statistic.length
     );
 
     for (let i = 0; i < length; i++) {
@@ -89,12 +89,14 @@ export default function Depths() {
 
     return timeLabels.map((time, index) => ({
       time,
-      mm_depth_sell: selectedData.mm_depth_sell_24h_statistic[index] || 0, // MM Sell depth (positive, above zero)
-      mm_depth_buy: -(selectedData.mm_depth_buy_24h_statistic[index] || 0), // MM Buy depth (negative, below zero)
+      mm_depth_minus_2: selectedData.mm_depth_minus_2_24h_statistic[index] || 0, // MM Sell depth (positive, above zero)
+      mm_depth_plus_2: -(
+        selectedData.mm_depth_plus_2_24h_statistic[index] || 0
+      ), // MM Buy depth (negative, below zero)
       organic_depth_sell:
-        selectedData.organic_depth_sell_24h_statistic[index] || 0, // Organic Sell depth (positive, above zero)
+        selectedData.organic_depth_minus_2_24h_statistic[index] || 0, // Organic Sell depth (positive, above zero)
       organic_depth_buy: -(
-        selectedData.organic_depth_buy_24h_statistic[index] || 0
+        selectedData.organic_depth_minus_2_24h_statistic[index] || 0
       ), // Organic Buy depth (negative, below zero)
     }));
   }, [selectedData]);
@@ -105,8 +107,8 @@ export default function Depths() {
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
           <span className="text-gray-300 text-sm">
-            {percentageChanges?.mm_depth_sell_change
-              ? `${percentageChanges.mm_depth_sell_change.toFixed(2)}%`
+            {percentageChanges?.mm_depth_minus_2_change
+              ? `${percentageChanges.mm_depth_minus_2_change.toFixed(2)}%`
               : "0%"}{" "}
             MM Sell (Token)
           </span>
@@ -114,8 +116,8 @@ export default function Depths() {
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-green-500 rounded-sm"></div>
           <span className="text-gray-300 text-sm">
-            {percentageChanges?.mm_depth_buy_change
-              ? `${percentageChanges.mm_depth_buy_change.toFixed(2)}%`
+            {percentageChanges?.mm_depth_plus_2_change
+              ? `${percentageChanges.mm_depth_plus_2_change.toFixed(2)}%`
               : "0%"}{" "}
             MM Buy ($)
           </span>
@@ -123,8 +125,8 @@ export default function Depths() {
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-yellow-500 rounded-sm"></div>
           <span className="text-gray-300 text-sm">
-            {percentageChanges?.organic_depth_sell_change
-              ? `${percentageChanges.organic_depth_sell_change.toFixed(2)}%`
+            {percentageChanges?.organic_depth_minus_2_change
+              ? `${percentageChanges.organic_depth_minus_2_change.toFixed(2)}%`
               : "0%"}{" "}
             Organic Sell (Token)
           </span>
@@ -132,8 +134,8 @@ export default function Depths() {
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-blue-500 rounded-sm"></div>
           <span className="text-gray-300 text-sm">
-            {percentageChanges?.organic_depth_buy_change
-              ? `${percentageChanges.organic_depth_buy_change.toFixed(2)}%`
+            {percentageChanges?.organic_depth_plus_2_change
+              ? `${percentageChanges.organic_depth_plus_2_change.toFixed(2)}%`
               : "0%"}{" "}
             Organic Buy ($)
           </span>

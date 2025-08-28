@@ -48,11 +48,11 @@ export default function PercentageChanges() {
               label="Volume"
             />
             <PercentageIndicator
-              value={percentageChanges.depth_plus_change}
+              value={percentageChanges.mm_depth_plus_2_change}
               label="Depth +"
             />
             <PercentageIndicator
-              value={percentageChanges.depth_minus_change}
+              value={percentageChanges.mm_depth_minus_2_change}
               label="Depth -"
             />
           </>

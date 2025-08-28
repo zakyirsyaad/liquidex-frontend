@@ -25,21 +25,21 @@ export function getPercentageChanges(
       current.last_vol_24h,
       previous.last_vol_24h
     ),
-    mm_depth_buy_change: calculatePercentageChange(
-      current.mm_depth_buy,
-      previous.mm_depth_buy
+    mm_depth_plus_2_change: calculatePercentageChange(
+      current.mm_depth_plus_2,
+      previous.mm_depth_plus_2
     ),
-    mm_depth_sell_change: calculatePercentageChange(
-      current.mm_depth_sell,
-      previous.mm_depth_sell
+    mm_depth_minus_2_change: calculatePercentageChange(
+      current.mm_depth_minus_2,
+      previous.mm_depth_minus_2
     ),
-    organic_depth_buy_change: calculatePercentageChange(
-      current.organic_depth_buy,
-      previous.organic_depth_buy
+    organic_depth_plus_2_change: calculatePercentageChange(
+      current.organic_depth_plus_2,
+      previous.organic_depth_plus_2
     ),
-    organic_depth_sell_change: calculatePercentageChange(
-      current.organic_depth_sell,
-      previous.organic_depth_sell
+    organic_depth_minus_2_change: calculatePercentageChange(
+      current.organic_depth_minus_2,
+      previous.organic_depth_minus_2
     ),
   };
 }
