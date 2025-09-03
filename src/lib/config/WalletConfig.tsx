@@ -23,6 +23,7 @@ export const WALLET_OWNERS = {
     "0x91472E17C35e0674236E369f13f161990C656686", // Replace with actual BBA owner wallet
     "0xDC4F5f571a67ceBed99C10A3a621487ddcf88eDe", // Add more BBA owner wallets as needed
     "0xea5108f56c24872f5d29DA85Ec04EA071F6D9476",
+    "0x9f5b55a6727691E18b883Fc5d30725E7bb125C92",
   ],
 } as const;
 
