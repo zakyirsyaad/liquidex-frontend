@@ -8,6 +8,14 @@ import VolumeStat from "./charts/VolumeStat";
 import Depths from "./charts/Depths";
 import UsdtBalance from "./charts/UsdtBalance";
 import TokenBalance from "./charts/TokenBalance";
+// Overview components
+import OverviewIndicators from "./OverviewIndicators";
+import OverviewAmounts from "./OverviewAmounts";
+import OverviewSpreadBid from "./charts/OverviewSpreadBid";
+import OverviewVolumeStat from "./charts/OverviewVolumeStat";
+import OverviewDepths from "./charts/OverviewDepths";
+import OverviewUsdtBalance from "./charts/OverviewUsdtBalance";
+import OverviewTokenBalance from "./charts/OverviewTokenBalance";
 import { useRealTimeData } from "@/hook/useRealTimeData";
 import { useExchangeStore } from "@/store/exchangeStore";
 import { useWalletAccess } from "@/hook/useWalletAccess";
@@ -55,24 +63,24 @@ export default function Dashboard() {
     enabled: true,
   });
 
-  const exchanges = React.useMemo(
-    () => (data ? Array.from(new Set(data.map((item) => item.exchange))) : []),
-    [data]
-  );
+  const exchanges = React.useMemo(() => {
+    const exchangeList = data
+      ? Array.from(new Set(data.map((item) => item.exchange)))
+      : [];
+    return ["Overview", ...exchangeList];
+  }, [data]);
 
-  // Auto-select first exchange when data source changes or when no exchange is selected
+  // Auto-select Overview when no exchange is selected
   React.useEffect(() => {
-    if (exchanges.length > 0 && !selectedExchange) {
-      setSelectedExchange(exchanges[0]);
+    if (!selectedExchange) {
+      setSelectedExchange("Overview");
     }
-  }, [exchanges, selectedExchange, setSelectedExchange]);
+  }, [selectedExchange, setSelectedExchange]);
 
-  // Auto-select first exchange when switching data sources
+  // Auto-select Overview when switching data sources
   React.useEffect(() => {
-    if (exchanges.length > 0) {
-      setSelectedExchange(exchanges[0]);
-    }
-  }, [effectiveDataSource, exchanges, setSelectedExchange]);
+    setSelectedExchange("Overview");
+  }, [effectiveDataSource, setSelectedExchange]);
 
   return (
     <AccessControl walletAccess={walletAccess}>
@@ -96,17 +104,36 @@ export default function Dashboard() {
         {/* Data Access Info */}
         <DataAccessInfo walletAccess={walletAccess} />
 
-        <Indicators />
-        <Amounts />
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
-          <SpreadBid />
-          <VolumeStat />
-        </section>
-        <Depths />
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
-          <UsdtBalance />
-          <TokenBalance />
-        </section>
+        {/* Conditional rendering based on selected exchange */}
+        {selectedExchange === "Overview" ? (
+          <>
+            <OverviewIndicators />
+            <OverviewAmounts />
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+              <OverviewSpreadBid />
+              <OverviewVolumeStat />
+            </section>
+            <OverviewDepths />
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+              <OverviewUsdtBalance />
+              <OverviewTokenBalance />
+            </section>
+          </>
+        ) : (
+          <>
+            <Indicators />
+            <Amounts />
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+              <SpreadBid />
+              <VolumeStat />
+            </section>
+            <Depths />
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+              <UsdtBalance />
+              <TokenBalance />
+            </section>
+          </>
+        )}
       </main>
     </AccessControl>
   );
