@@ -130,9 +130,9 @@ export default function OverviewLastVol() {
                 })}`
               : "-"}
           </p>
-          <span className="text-sm text-muted-foreground">
+          {/* <span className="text-sm text-muted-foreground">
             ({overviewData?.exchange_count || 0} exchanges)
-          </span>
+          </span> */}
         </CardContent>
       </div>
       <ChartContainer config={chartConfig}>
