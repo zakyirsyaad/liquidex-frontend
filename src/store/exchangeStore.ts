@@ -100,30 +100,48 @@ export const useExchangeStore = create<DashboardStore>((set, get) => ({
     if (!data || data.length === 0) return null;
 
     // Calculate totals and averages
-    const total_usdt_balance = data.reduce(
-      (sum, item) => sum + item.balance_usdt,
-      0
-    );
-    const total_token_balance = data.reduce(
-      (sum, item) => sum + item.balance_token,
-      0
-    );
-    const total_deployed_buy = data.reduce(
-      (sum, item) => sum + item.deployed_buy,
-      0
-    );
-    const total_deployed_sell = data.reduce(
-      (sum, item) => sum + item.deployed_sell,
-      0
-    );
-    const total_estimated_fee = data.reduce(
-      (sum, item) => sum + item.estimated_fee,
-      0
-    );
-    const total_generated_volume = data.reduce(
-      (sum, item) => sum + item.generated_volume,
-      0
-    );
+    const total_usdt_balance = data.reduce((sum, item) => {
+      const balance =
+        typeof item.balance_usdt === "string"
+          ? parseFloat(item.balance_usdt)
+          : Number(item.balance_usdt);
+      return sum + (isNaN(balance) ? 0 : balance);
+    }, 0);
+    const total_token_balance = data.reduce((sum, item) => {
+      const balance =
+        typeof item.balance_token === "string"
+          ? parseFloat(item.balance_token)
+          : Number(item.balance_token);
+      return sum + (isNaN(balance) ? 0 : balance);
+    }, 0);
+    const total_deployed_buy = data.reduce((sum, item) => {
+      const deployed =
+        typeof item.deployed_buy === "string"
+          ? parseFloat(item.deployed_buy)
+          : Number(item.deployed_buy);
+      return sum + (isNaN(deployed) ? 0 : deployed);
+    }, 0);
+    const total_deployed_sell = data.reduce((sum, item) => {
+      const deployed =
+        typeof item.deployed_sell === "string"
+          ? parseFloat(item.deployed_sell)
+          : Number(item.deployed_sell);
+      return sum + (isNaN(deployed) ? 0 : deployed);
+    }, 0);
+    const total_estimated_fee = data.reduce((sum, item) => {
+      const fee =
+        typeof item.estimated_fee === "string"
+          ? parseFloat(item.estimated_fee)
+          : Number(item.estimated_fee);
+      return sum + (isNaN(fee) ? 0 : fee);
+    }, 0);
+    const total_generated_volume = data.reduce((sum, item) => {
+      const volume =
+        typeof item.generated_volume === "string"
+          ? parseFloat(item.generated_volume)
+          : Number(item.generated_volume);
+      return sum + (isNaN(volume) ? 0 : volume);
+    }, 0);
 
     // Calculate averages
     const avg_mm_depth_plus_2 =

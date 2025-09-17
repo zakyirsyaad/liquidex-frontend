@@ -24,6 +24,22 @@ export default function OverviewLastVol() {
 
   const totalVolume = overviewData?.total_generated_volume;
 
+  // Ensure totalVolume is a valid number
+  const formattedTotalVolume = React.useMemo(() => {
+    if (totalVolume === undefined || totalVolume === null) return null;
+
+    // Convert to number and validate
+    const numValue =
+      typeof totalVolume === "string"
+        ? parseFloat(totalVolume)
+        : Number(totalVolume);
+
+    // Check if it's a valid number
+    if (isNaN(numValue) || !isFinite(numValue)) return null;
+
+    return numValue;
+  }, [totalVolume]);
+
   // Transform combined volume data for chart
   const chartData = React.useMemo(() => {
     if (
@@ -107,8 +123,11 @@ export default function OverviewLastVol() {
         </CardHeader>
         <CardContent className="flex items-center gap-2">
           <p className="text-xl font-medium">
-            {totalVolume !== undefined && totalVolume !== null
-              ? `$${totalVolume.toLocaleString()}`
+            {formattedTotalVolume !== null
+              ? `$${formattedTotalVolume.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`
               : "-"}
           </p>
           <span className="text-sm text-muted-foreground">
