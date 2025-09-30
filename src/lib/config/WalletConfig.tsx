@@ -17,6 +17,7 @@ export const WALLET_OWNERS = {
     "0x3d9a6cB7bae3dDfC058c16B7BBC47E706DD3dAfA", // Add more KOM owner wallets as needed
     "0xea5108f56c24872f5d29DA85Ec04EA071F6D9476",
     "0xe6a7b46A6288D6f939674C4652cf1C2BB9746e2E",
+    "0x64B76C6A8030aEE37Ea07Fa03aE87478Fc574846",
   ],
   BBA: process.env.NEXT_PUBLIC_BBA_OWNER_WALLETS?.split(",").filter(
     Boolean
