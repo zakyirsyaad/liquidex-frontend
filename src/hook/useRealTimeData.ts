@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useExchangeStore } from "@/store/exchangeStore";
+import { useExchangeStore, ExchangeData } from "@/store/exchangeStore";
 import { saveMetricsToSupabase } from "@/lib/autoSaveMetrics";
 import { useWalletAccess } from "./useWalletAccess";
 
@@ -64,17 +64,19 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
           console.log("KOM Data fetched:", komJson.length, "items");
 
           // Transform field names to match ExchangeData type
-          const transformedData = komJson.map((item: any) => ({
-            ...item,
-            mm_depth_minus_2_24h_statistic:
-              item.depth_minus_2_24h_statistic || [],
-            mm_depth_plus_2_24h_statistic:
-              item.depth_plus_2_24h_statistic || [],
-            organic_depth_minus_2_24h_statistic:
-              item.organic_depth_minus_2_24h_statistic || [],
-            organic_depth_plus_2_24h_statistic:
-              item.organic_depth_plus_2_24h_statistic || [],
-          }));
+          const transformedData = komJson.map(
+            (item: Record<string, unknown>) => ({
+              ...item,
+              mm_depth_minus_2_24h_statistic:
+                item.depth_minus_2_24h_statistic || [],
+              mm_depth_plus_2_24h_statistic:
+                item.depth_plus_2_24h_statistic || [],
+              organic_depth_minus_2_24h_statistic:
+                item.organic_depth_minus_2_24h_statistic || [],
+              organic_depth_plus_2_24h_statistic:
+                item.organic_depth_plus_2_24h_statistic || [],
+            })
+          ) as ExchangeData[];
 
           setData(transformedData);
 
@@ -109,17 +111,19 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
           console.log("BBA Data fetched:", bbaJson.length, "items");
 
           // Transform field names to match ExchangeData type
-          const transformedData = bbaJson.map((item: any) => ({
-            ...item,
-            mm_depth_minus_2_24h_statistic:
-              item.depth_minus_2_24h_statistic || [],
-            mm_depth_plus_2_24h_statistic:
-              item.depth_plus_2_24h_statistic || [],
-            organic_depth_minus_2_24h_statistic:
-              item.organic_depth_minus_2_24h_statistic || [],
-            organic_depth_plus_2_24h_statistic:
-              item.organic_depth_plus_2_24h_statistic || [],
-          }));
+          const transformedData = bbaJson.map(
+            (item: Record<string, unknown>) => ({
+              ...item,
+              mm_depth_minus_2_24h_statistic:
+                item.depth_minus_2_24h_statistic || [],
+              mm_depth_plus_2_24h_statistic:
+                item.depth_plus_2_24h_statistic || [],
+              organic_depth_minus_2_24h_statistic:
+                item.organic_depth_minus_2_24h_statistic || [],
+              organic_depth_plus_2_24h_statistic:
+                item.organic_depth_plus_2_24h_statistic || [],
+            })
+          ) as ExchangeData[];
 
           setBBAData(transformedData);
 
@@ -141,12 +145,7 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    setData,
-    setBBAData,
-    walletAccess.hasKOMAccess,
-    walletAccess.hasBBAAccess,
-  ]);
+  }, [setData, setBBAData, walletAccess]);
 
   // Initial fetch
   useEffect(() => {
