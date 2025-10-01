@@ -21,8 +21,10 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function OverviewVolumeStat() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   // Transform combined volume data for chart
   const chartData = React.useMemo(() => {

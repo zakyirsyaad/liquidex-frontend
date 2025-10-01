@@ -4,8 +4,10 @@ import { DollarSign } from "lucide-react";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export default function OverviewSpread() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   if (!overviewData) {
     return (

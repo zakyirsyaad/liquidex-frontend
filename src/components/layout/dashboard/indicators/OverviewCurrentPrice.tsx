@@ -19,8 +19,10 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function OverviewCurrentPrice() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   const averagePrice = overviewData?.avg_internal_pricing;
 

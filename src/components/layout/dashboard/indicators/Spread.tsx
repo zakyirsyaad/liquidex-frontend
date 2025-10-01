@@ -4,8 +4,8 @@ import { DollarSign } from "lucide-react";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export default function Spread() {
-  const getCurrentData = useExchangeStore((s) => s.getCurrentData);
-  const data = getCurrentData();
+  const filteredData = useExchangeStore((s) => s.filteredData);
+  const data = filteredData;
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
   return (

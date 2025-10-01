@@ -4,8 +4,10 @@ import { PercentageIndicator } from "@/components/ui/PercentageIndicator";
 import { Card } from "@/components/ui/card";
 
 export default function OverviewPercentageChanges() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   if (!overviewData) {
     return (

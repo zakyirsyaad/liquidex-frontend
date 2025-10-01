@@ -34,19 +34,63 @@ export default function Dashboard() {
   const setSelectedDataSource = useExchangeStore(
     (state) => state.setSelectedDataSource
   );
-  const getAccessibleData = useExchangeStore(
-    (state) => state.getAccessibleData
-  );
-  const getAccessibleDataSource = useExchangeStore(
-    (state) => state.getAccessibleDataSource
-  );
 
   // Get wallet access
   const walletAccess = useWalletAccess();
 
-  // Get data based on wallet access
-  const accessibleData = getAccessibleData();
-  const accessibleDataSource = getAccessibleDataSource();
+  // Get data from store
+  const data = useExchangeStore((state) => state.data);
+  const bbaData = useExchangeStore((state) => state.bbaData);
+  const selectedDataSource = useExchangeStore(
+    (state) => state.selectedDataSource
+  );
+  const setFilteredData = useExchangeStore((state) => state.setFilteredData);
+
+  // Get data based on wallet access - use hook's walletAccess directly
+  const accessibleData = React.useMemo(() => {
+    const { hasKOMAccess, hasBBAAccess } = walletAccess;
+
+    console.log("Dashboard Debug:", {
+      walletAccess,
+      hasKOMAccess,
+      hasBBAAccess,
+      dataLength: data?.length || 0,
+      bbaDataLength: bbaData?.length || 0,
+      selectedDataSource,
+    });
+
+    if (hasKOMAccess && hasBBAAccess) {
+      // User has access to both, return current selected data
+      return selectedDataSource === "KOM" ? data : bbaData;
+    } else if (hasKOMAccess) {
+      // User only has KOM access
+      return data;
+    } else if (hasBBAAccess) {
+      // User only has BBA access
+      return bbaData;
+    }
+
+    // No access
+    return [];
+  }, [walletAccess, data, bbaData, selectedDataSource]);
+
+  const accessibleDataSource = React.useMemo(() => {
+    const { hasKOMAccess, hasBBAAccess } = walletAccess;
+
+    if (hasKOMAccess && hasBBAAccess) {
+      // User has access to both, return current selection
+      return selectedDataSourceStore;
+    } else if (hasKOMAccess) {
+      // User only has KOM access
+      return "KOM";
+    } else if (hasBBAAccess) {
+      // User only has BBA access
+      return "BBA";
+    }
+
+    // No access
+    return null;
+  }, [walletAccess, selectedDataSourceStore]);
 
   // Effective data source: if both accessible, use store-selected; otherwise clamp to available
   const effectiveDataSource: "KOM" | "BBA" | null =
@@ -55,7 +99,7 @@ export default function Dashboard() {
       : accessibleDataSource;
 
   // Use accessible data instead of current data
-  const data = accessibleData;
+  const displayData = accessibleData;
 
   // Real-time data with default settings
   const { isLoading, lastUpdate, error } = useRealTimeData({
@@ -64,11 +108,11 @@ export default function Dashboard() {
   });
 
   const exchanges = React.useMemo(() => {
-    const exchangeList = data
-      ? Array.from(new Set(data.map((item) => item.exchange)))
+    const exchangeList = displayData
+      ? Array.from(new Set(displayData.map((item) => item.exchange)))
       : [];
     return ["Overview", ...exchangeList];
-  }, [data]);
+  }, [displayData]);
 
   // Auto-select Overview when no exchange is selected
   React.useEffect(() => {
@@ -81,6 +125,11 @@ export default function Dashboard() {
   React.useEffect(() => {
     setSelectedExchange("Overview");
   }, [effectiveDataSource, setSelectedExchange]);
+
+  // Update filtered data in store when accessible data changes
+  React.useEffect(() => {
+    setFilteredData(accessibleData);
+  }, [accessibleData, setFilteredData]);
 
   return (
     <AccessControl walletAccess={walletAccess}>

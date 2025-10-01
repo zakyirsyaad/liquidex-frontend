@@ -36,6 +36,13 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
       setIsLoading(true);
       setError(null);
 
+      console.log("useRealTimeData Debug:", {
+        walletAccess,
+        hasKOMAccess: walletAccess.hasKOMAccess,
+        hasBBAAccess: walletAccess.hasBBAAccess,
+        isConnected: walletAccess.isConnected,
+      });
+
       // Only fetch data based on wallet access
       if (walletAccess.hasKOMAccess) {
         const komRes = await fetch("/api/liquidex", {
@@ -54,14 +61,31 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
         const komJson = await komRes.json();
 
         if (komJson && Array.isArray(komJson)) {
-          setData(komJson);
+          console.log("KOM Data fetched:", komJson.length, "items");
+
+          // Transform field names to match ExchangeData type
+          const transformedData = komJson.map((item: any) => ({
+            ...item,
+            mm_depth_minus_2_24h_statistic:
+              item.depth_minus_2_24h_statistic || [],
+            mm_depth_plus_2_24h_statistic:
+              item.depth_plus_2_24h_statistic || [],
+            organic_depth_minus_2_24h_statistic:
+              item.organic_depth_minus_2_24h_statistic || [],
+            organic_depth_plus_2_24h_statistic:
+              item.organic_depth_plus_2_24h_statistic || [],
+          }));
+
+          setData(transformedData);
 
           // Auto-save KOM metrics to Supabase
           try {
-            await saveMetricsToSupabase(komJson);
+            await saveMetricsToSupabase(transformedData);
           } catch (saveError) {
             console.error("Failed to save KOM metrics:", saveError);
           }
+        } else {
+          console.log("KOM Data is not an array:", komJson);
         }
       }
 
@@ -82,14 +106,31 @@ export function useRealTimeData(options: UseRealTimeDataOptions = {}) {
         const bbaJson = await bbaRes.json();
 
         if (bbaJson && Array.isArray(bbaJson)) {
-          setBBAData(bbaJson);
+          console.log("BBA Data fetched:", bbaJson.length, "items");
+
+          // Transform field names to match ExchangeData type
+          const transformedData = bbaJson.map((item: any) => ({
+            ...item,
+            mm_depth_minus_2_24h_statistic:
+              item.depth_minus_2_24h_statistic || [],
+            mm_depth_plus_2_24h_statistic:
+              item.depth_plus_2_24h_statistic || [],
+            organic_depth_minus_2_24h_statistic:
+              item.organic_depth_minus_2_24h_statistic || [],
+            organic_depth_plus_2_24h_statistic:
+              item.organic_depth_plus_2_24h_statistic || [],
+          }));
+
+          setBBAData(transformedData);
 
           // Auto-save BBA metrics to Supabase
           try {
-            await saveMetricsToSupabase(bbaJson);
+            await saveMetricsToSupabase(transformedData);
           } catch (saveError) {
             console.error("Failed to save BBA metrics:", saveError);
           }
+        } else {
+          console.log("BBA Data is not an array:", bbaJson);
         }
       }
 

@@ -6,8 +6,8 @@ import { Card } from "@/components/ui/card";
 
 export default function PercentageChanges() {
   const selected = useExchangeStore((s) => s.selectedExchange);
-  const getCurrentData = useExchangeStore((s) => s.getCurrentData);
-  const data = getCurrentData();
+  const filteredData = useExchangeStore((s) => s.filteredData);
+  const data = filteredData;
   const selectedData = data.find((d) => d.exchange === selected);
 
   const { percentageChanges, loading } = useMetrics(

@@ -78,6 +78,10 @@ export type DashboardStore = {
   // Get filtered data based on wallet access
   getAccessibleData: () => ExchangeData[];
   getAccessibleDataSource: () => "KOM" | "BBA" | null;
+  // Filtered data based on wallet access
+  filteredData: ExchangeData[];
+  setFilteredData: (data: ExchangeData[]) => void;
+  getFilteredOverviewData: () => OverviewData | null;
 };
 
 export const useExchangeStore = create<DashboardStore>((set, get) => ({
@@ -89,13 +93,16 @@ export const useExchangeStore = create<DashboardStore>((set, get) => ({
   setSelectedExchange: (e) => set({ selectedExchange: e }),
   selectedDataSource: "KOM",
   setSelectedDataSource: (source) => set({ selectedDataSource: source }),
+  // Filtered data based on wallet access
+  filteredData: [],
+  setFilteredData: (data) => set({ filteredData: data }),
   getCurrentData: () => {
     const state = get();
     return state.selectedDataSource === "KOM" ? state.data : state.bbaData;
   },
   getOverviewData: () => {
     const state = get();
-    const data = state.getCurrentData();
+    const data = state.filteredData;
 
     if (!data || data.length === 0) return null;
 
@@ -303,5 +310,177 @@ export const useExchangeStore = create<DashboardStore>((set, get) => ({
 
     // No access
     return null;
+  },
+  getFilteredOverviewData: () => {
+    const state = get();
+    const data = state.filteredData;
+
+    if (!data || data.length === 0) return null;
+
+    // Calculate totals and averages using filtered data
+    const total_usdt_balance = data.reduce((sum, item) => {
+      const balance =
+        typeof item.balance_usdt === "string"
+          ? parseFloat(item.balance_usdt)
+          : Number(item.balance_usdt);
+      return sum + (isNaN(balance) ? 0 : balance);
+    }, 0);
+    const total_token_balance = data.reduce((sum, item) => {
+      const balance =
+        typeof item.balance_token === "string"
+          ? parseFloat(item.balance_token)
+          : Number(item.balance_token);
+      return sum + (isNaN(balance) ? 0 : balance);
+    }, 0);
+    const total_deployed_buy = data.reduce((sum, item) => {
+      const deployed =
+        typeof item.deployed_buy === "string"
+          ? parseFloat(item.deployed_buy)
+          : Number(item.deployed_buy);
+      return sum + (isNaN(deployed) ? 0 : deployed);
+    }, 0);
+    const total_deployed_sell = data.reduce((sum, item) => {
+      const deployed =
+        typeof item.deployed_sell === "string"
+          ? parseFloat(item.deployed_sell)
+          : Number(item.deployed_sell);
+      return sum + (isNaN(deployed) ? 0 : deployed);
+    }, 0);
+
+    // Calculate averages
+    const avg_mm_depth_plus_2 =
+      data.reduce((sum, item) => {
+        const depth =
+          typeof item.mm_depth_plus_2 === "string"
+            ? parseFloat(item.mm_depth_plus_2)
+            : Number(item.mm_depth_plus_2);
+        return sum + (isNaN(depth) ? 0 : depth);
+      }, 0) / data.length;
+
+    const avg_mm_depth_minus_2 =
+      data.reduce((sum, item) => {
+        const depth =
+          typeof item.mm_depth_minus_2 === "string"
+            ? parseFloat(item.mm_depth_minus_2)
+            : Number(item.mm_depth_minus_2);
+        return sum + (isNaN(depth) ? 0 : depth);
+      }, 0) / data.length;
+
+    const avg_organic_depth_plus_2 =
+      data.reduce((sum, item) => {
+        const depth =
+          typeof item.organic_depth_plus_2 === "string"
+            ? parseFloat(item.organic_depth_plus_2)
+            : Number(item.organic_depth_plus_2);
+        return sum + (isNaN(depth) ? 0 : depth);
+      }, 0) / data.length;
+
+    const avg_organic_depth_minus_2 =
+      data.reduce((sum, item) => {
+        const depth =
+          typeof item.organic_depth_minus_2 === "string"
+            ? parseFloat(item.organic_depth_minus_2)
+            : Number(item.organic_depth_minus_2);
+        return sum + (isNaN(depth) ? 0 : depth);
+      }, 0) / data.length;
+
+    // Get unique exchanges
+    const exchanges = Array.from(new Set(data.map((item) => item.exchange)));
+
+    // Calculate additional fields
+    const total_estimated_fee = data.reduce((sum, item) => {
+      const fee =
+        typeof item.estimated_fee === "string"
+          ? parseFloat(item.estimated_fee)
+          : Number(item.estimated_fee);
+      return sum + (isNaN(fee) ? 0 : fee);
+    }, 0);
+
+    const avg_spread =
+      data.reduce((sum, item) => {
+        const spread =
+          typeof item.spread === "string"
+            ? parseFloat(item.spread)
+            : Number(item.spread);
+        return sum + (isNaN(spread) ? 0 : spread);
+      }, 0) / data.length;
+
+    const avg_internal_pricing =
+      data.reduce((sum, item) => {
+        const pricing =
+          typeof item.internal_pricing === "string"
+            ? parseFloat(item.internal_pricing)
+            : Number(item.internal_pricing);
+        return sum + (isNaN(pricing) ? 0 : pricing);
+      }, 0) / data.length;
+
+    const total_generated_volume = data.reduce((sum, item) => {
+      const volume =
+        typeof item.generated_volume === "string"
+          ? parseFloat(item.generated_volume)
+          : Number(item.generated_volume);
+      return sum + (isNaN(volume) ? 0 : volume);
+    }, 0);
+
+    const avg_24h_price =
+      data.reduce((sum, item) => {
+        const price =
+          typeof item.avg_24h_price === "string"
+            ? parseFloat(item.avg_24h_price)
+            : Number(item.avg_24h_price);
+        return sum + (isNaN(price) ? 0 : price);
+      }, 0) / data.length;
+
+    // Get 24h statistics for combined data
+    const combined_volume_24h_statistic = data.flatMap(
+      (item) => item.volume_24h_statistic || []
+    );
+    const combined_spread_24h_statistic = data.flatMap(
+      (item) => item.spread_24h_statistic || []
+    );
+    const combined_usdt_balance_24h_statistic = data.flatMap(
+      (item) => item.usdt_balance_24h_statistic || []
+    );
+    const combined_token_balance_24h_statistic = data.flatMap(
+      (item) => item.token_balance_24h_statistic || []
+    );
+    const combined_mm_depth_plus_2_24h_statistic = data.flatMap(
+      (item) => item.mm_depth_plus_2_24h_statistic || []
+    );
+    const combined_mm_depth_minus_2_24h_statistic = data.flatMap(
+      (item) => item.mm_depth_minus_2_24h_statistic || []
+    );
+    const combined_organic_depth_plus_2_24h_statistic = data.flatMap(
+      (item) => item.organic_depth_plus_2_24h_statistic || []
+    );
+    const combined_organic_depth_minus_2_24h_statistic = data.flatMap(
+      (item) => item.organic_depth_minus_2_24h_statistic || []
+    );
+
+    return {
+      total_usdt_balance,
+      total_token_balance,
+      total_deployed_buy,
+      total_deployed_sell,
+      total_estimated_fee,
+      avg_mm_depth_plus_2,
+      avg_mm_depth_minus_2,
+      avg_organic_depth_plus_2,
+      avg_organic_depth_minus_2,
+      avg_spread,
+      avg_internal_pricing,
+      total_generated_volume,
+      avg_24h_price,
+      combined_volume_24h_statistic,
+      combined_spread_24h_statistic,
+      combined_usdt_balance_24h_statistic,
+      combined_token_balance_24h_statistic,
+      combined_mm_depth_plus_2_24h_statistic,
+      combined_mm_depth_minus_2_24h_statistic,
+      combined_organic_depth_plus_2_24h_statistic,
+      combined_organic_depth_minus_2_24h_statistic,
+      exchange_count: exchanges.length,
+      exchanges,
+    };
   },
 }));

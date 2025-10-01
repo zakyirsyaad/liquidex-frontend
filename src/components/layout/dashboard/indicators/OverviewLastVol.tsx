@@ -19,8 +19,10 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function OverviewLastVol() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   const totalVolume = overviewData?.total_generated_volume;
 

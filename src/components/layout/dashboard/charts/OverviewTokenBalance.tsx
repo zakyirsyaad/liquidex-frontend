@@ -14,8 +14,10 @@ import { useExchangeStore } from "@/store/exchangeStore";
 export const description = "Total Token Balance 24h Chart";
 
 export default function OverviewTokenBalance() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   // Transform combined token balance data for chart
   const chartData = React.useMemo(() => {

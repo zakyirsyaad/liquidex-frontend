@@ -3,8 +3,10 @@ import { Card } from "@/components/ui/card";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export default function OverviewAmounts() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   if (!overviewData) {
     return (

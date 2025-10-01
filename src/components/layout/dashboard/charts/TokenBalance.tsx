@@ -14,8 +14,8 @@ import { useExchangeStore } from "@/store/exchangeStore";
 export const description = "Token Balance 24h Chart";
 
 export default function TokenBalance() {
-  const getCurrentData = useExchangeStore((s) => s.getCurrentData);
-  const data = getCurrentData();
+  const filteredData = useExchangeStore((s) => s.filteredData);
+  const data = filteredData;
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
 

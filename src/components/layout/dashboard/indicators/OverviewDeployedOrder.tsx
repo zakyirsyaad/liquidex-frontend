@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useExchangeStore } from "@/store/exchangeStore";
 
 export default function OverviewDeployedOrder() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   if (!overviewData) {
     return (

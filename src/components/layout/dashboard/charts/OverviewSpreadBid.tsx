@@ -22,8 +22,10 @@ const chartConfig = {
 };
 
 export default function OverviewSpreadBid() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   // Transform combined spread data for chart
   const chartData = React.useMemo(() => {

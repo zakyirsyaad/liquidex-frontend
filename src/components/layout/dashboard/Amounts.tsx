@@ -4,8 +4,8 @@ import { useExchangeStore } from "@/store/exchangeStore";
 import { useMetrics } from "@/hook/useMetrics";
 
 export default function Amounts() {
-  const getCurrentData = useExchangeStore((s) => s.getCurrentData);
-  const data = getCurrentData();
+  const filteredData = useExchangeStore((s) => s.filteredData);
+  const data = filteredData;
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
 

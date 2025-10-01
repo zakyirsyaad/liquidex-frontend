@@ -36,8 +36,10 @@ const chartConfig = {
 };
 
 export default function OverviewDepths() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   // Transform combined depth data for chart
   const chartData = React.useMemo(() => {

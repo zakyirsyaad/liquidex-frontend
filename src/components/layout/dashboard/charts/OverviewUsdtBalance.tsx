@@ -14,8 +14,10 @@ import { useExchangeStore } from "@/store/exchangeStore";
 export const description = "Total USDT Balance 24h Chart";
 
 export default function OverviewUsdtBalance() {
-  const getOverviewData = useExchangeStore((s) => s.getOverviewData);
-  const overviewData = getOverviewData();
+  const getFilteredOverviewData = useExchangeStore(
+    (s) => s.getFilteredOverviewData
+  );
+  const overviewData = getFilteredOverviewData();
 
   // Transform combined usdt balance data for chart
   const chartData = React.useMemo(() => {

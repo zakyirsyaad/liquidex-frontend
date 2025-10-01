@@ -37,8 +37,8 @@ const chartConfig = {
 };
 
 export default function Depths() {
-  const getCurrentData = useExchangeStore((s) => s.getCurrentData);
-  const data = getCurrentData();
+  const filteredData = useExchangeStore((s) => s.filteredData);
+  const data = filteredData;
   const selected = useExchangeStore((s) => s.selectedExchange);
   const selectedData = data.find((d) => d.exchange === selected);
 
