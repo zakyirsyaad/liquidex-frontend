@@ -16,12 +16,12 @@ import OverviewVolumeStat from "./charts/OverviewVolumeStat";
 import OverviewDepths from "./charts/OverviewDepths";
 import OverviewUsdtBalance from "./charts/OverviewUsdtBalance";
 import OverviewTokenBalance from "./charts/OverviewTokenBalance";
-import { useRealTimeData } from "@/hook/useRealTimeData";
+import { useRealTimeDataFactory } from "@/hook/useRealTimeDataFactory";
 import { useExchangeStore } from "@/store/exchangeStore";
 import { useWalletAccess } from "@/hook/useWalletAccess";
 import AccessControl from "../AccessControl";
-import WalletAccessStatus from "../../ui/WalletAccessStatus";
-import DataAccessInfo from "../../ui/DataAccessInfo";
+// import WalletAccessStatus from "../../ui/WalletAccessStatus";
+// import DataAccessInfo from "../../ui/DataAccessInfo";
 
 export default function Dashboard() {
   const selectedExchange = useExchangeStore((state) => state.selectedExchange);
@@ -101,11 +101,22 @@ export default function Dashboard() {
   // Use accessible data instead of current data
   const displayData = accessibleData;
 
-  // Real-time data with default settings
-  const { isLoading, lastUpdate, error } = useRealTimeData({
-    interval: 30000, // 30 seconds
+  // Real-time data with optimized settings
+  const realTimeData = useRealTimeDataFactory({
+    method: "optimized-polling", // Use optimized polling by default
+    ...(true && { baseInterval: 30000 }), // 30 seconds base interval
     enabled: true,
+    adaptiveInterval: true, // Enable adaptive interval
   });
+
+  const isLoading =
+    "isLoading" in realTimeData ? realTimeData.isLoading : false;
+  const lastUpdate = realTimeData.lastUpdate;
+  const error = realTimeData.error;
+  const currentInterval =
+    "currentInterval" in realTimeData
+      ? (realTimeData.currentInterval as number)
+      : undefined;
 
   const exchanges = React.useMemo(() => {
     const exchangeList = displayData
@@ -141,6 +152,7 @@ export default function Dashboard() {
             isLoading,
             lastUpdate,
             error,
+            currentInterval,
           }}
           selectedDataSource={effectiveDataSource || "KOM"}
           onDataSourceChange={setSelectedDataSource}
@@ -148,10 +160,10 @@ export default function Dashboard() {
         />
 
         {/* Wallet Access Status */}
-        <WalletAccessStatus walletAccess={walletAccess} />
+        {/* <WalletAccessStatus walletAccess={walletAccess} /> */}
 
         {/* Data Access Info */}
-        <DataAccessInfo walletAccess={walletAccess} />
+        {/* <DataAccessInfo walletAccess={walletAccess} /> */}
 
         {/* Conditional rendering based on selected exchange */}
         {selectedExchange === "Overview" ? (

@@ -12,6 +12,7 @@ interface HeaderProps {
     isLoading: boolean;
     lastUpdate: Date | null;
     error: string | null;
+    currentInterval?: number;
   };
   selectedDataSource: "KOM" | "BBA";
   onDataSourceChange: (source: "KOM" | "BBA") => void;
