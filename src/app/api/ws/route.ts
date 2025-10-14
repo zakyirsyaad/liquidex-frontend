@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 
 // WebSocket handler for Next.js App Router
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
   const upgrade = request.headers.get("upgrade");
 
   if (upgrade !== "websocket") {

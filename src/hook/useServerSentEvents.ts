@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useExchangeStore, ExchangeData } from "@/store/exchangeStore";
+import { useExchangeStore } from "@/store/exchangeStore";
 import { saveMetricsToSupabase } from "@/lib/autoSaveMetrics";
 import { useWalletAccess } from "./useWalletAccess";
 
@@ -110,7 +110,7 @@ export function useServerSentEvents(options: SSEOptions = {}) {
 
       eventSourceRef.current.addEventListener(
         "kom_data",
-        async (event: any) => {
+        async (event: MessageEvent) => {
           try {
             const data = JSON.parse(event.data);
             if (data && Array.isArray(data)) {
@@ -136,7 +136,7 @@ export function useServerSentEvents(options: SSEOptions = {}) {
 
       eventSourceRef.current.addEventListener(
         "bba_data",
-        async (event: any) => {
+        async (event: MessageEvent) => {
           try {
             const data = JSON.parse(event.data);
             if (data && Array.isArray(data)) {
@@ -186,14 +186,7 @@ export function useServerSentEvents(options: SSEOptions = {}) {
       console.error("Failed to create SSE connection:", error);
       setError("Failed to connect to Server-Sent Events");
     }
-  }, [
-    enabled,
-    walletAccess,
-    reconnectInterval,
-    setData,
-    setBBAData,
-    setWalletAccess,
-  ]);
+  }, [enabled, walletAccess, reconnectInterval, setData, setBBAData]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {

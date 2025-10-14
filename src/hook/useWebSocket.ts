@@ -155,7 +155,7 @@ export function useWebSocket(options: { enabled?: boolean } = {}) {
       console.error("Failed to create WebSocket connection:", error);
       setError("Failed to connect to WebSocket");
     }
-  }, [enabled, walletAccess, setData, setBBAData, setWalletAccess]);
+  }, [enabled, walletAccess, setData, setBBAData]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {

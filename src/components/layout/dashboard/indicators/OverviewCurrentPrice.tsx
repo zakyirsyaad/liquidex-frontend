@@ -40,7 +40,7 @@ export default function OverviewCurrentPrice() {
       time: `T${index + 1}`,
       price: (averagePrice || 0) + (spread || 0) * 0.1, // Use spread as price variation
     }));
-  }, [overviewData?.combined_spread_24h_statistic, averagePrice]);
+  }, [overviewData?.combined_spread_24h_statistic, overviewData, averagePrice]);
 
   if (!overviewData) {
     return (

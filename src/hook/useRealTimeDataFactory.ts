@@ -24,24 +24,30 @@ export function useRealTimeDataFactory(
 ) {
   const { method = "optimized-polling", ...restOptions } = options;
 
+  // Always call all hooks to maintain hook order
+  const pollingResult = useRealTimeData(restOptions);
+  const optimizedResult = useOptimizedRealTimeData(restOptions);
+  const sseResult = useServerSentEvents(restOptions);
+  const wsResult = useWebSocket(restOptions);
+
   switch (method) {
     case "polling":
-      return useRealTimeData(restOptions);
+      return pollingResult;
 
     case "optimized-polling":
-      return useOptimizedRealTimeData(restOptions);
+      return optimizedResult;
 
     case "sse":
-      return useServerSentEvents(restOptions);
+      return sseResult;
 
     case "websocket":
-      return useWebSocket(restOptions);
+      return wsResult;
 
     default:
       console.warn(
         `Unknown real-time method: ${method}, falling back to optimized polling`
       );
-      return useOptimizedRealTimeData(restOptions);
+      return optimizedResult;
   }
 }
 

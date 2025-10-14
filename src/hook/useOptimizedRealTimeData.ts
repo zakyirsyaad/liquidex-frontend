@@ -49,17 +49,20 @@ export function useOptimizedRealTimeData(
   }, [walletAccess, setWalletAccess]);
 
   // Simple hash function for data comparison
-  const getDataHash = useCallback((data: any[]): string => {
+  const getDataHash = useCallback((data: unknown[]): string => {
     if (!data || data.length === 0) return "";
     return JSON.stringify(
-      data.map((item) => ({
-        // Only include key fields that indicate data changes
-        exchange: item.exchange,
-        timestamp: item.timestamp || item.created_at,
-        price: item.current_price,
-        volume: item.volume_24h,
-        balance: item.usdt_balance,
-      }))
+      data.map((item) => {
+        const record = item as Record<string, unknown>;
+        return {
+          // Only include key fields that indicate data changes
+          exchange: record.exchange,
+          timestamp: record.timestamp || record.created_at,
+          price: record.current_price,
+          volume: record.volume_24h,
+          balance: record.usdt_balance,
+        };
+      })
     );
   }, []);
 
