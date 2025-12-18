@@ -27,6 +27,7 @@ export const WALLET_OWNERS = {
     "0xDC4F5f571a67ceBed99C10A3a621487ddcf88eDe", // Add more BBA owner wallets as needed
     "0xea5108f56c24872f5d29DA85Ec04EA071F6D9476",
     "0x9f5b55a6727691E18b883Fc5d30725E7bb125C92",
+    "0x4C75ce67fc46BDd12aaC1ae74A26C8C9c9Bf4E74",
   ],
 } as const;
 
